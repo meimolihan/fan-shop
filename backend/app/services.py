@@ -1535,7 +1535,7 @@ def deploy_yml(repo_name: str, file_path: str) -> Generator[dict, None, None]:
                     env["PROGRESS_NO_TRUNC"] = "1"
                     env["PYTHONUNBUFFERED"] = "1"
                     # 统一所有部署的 compose 项目名，使多个 yml 合并到同一个 project 下管理
-                    env["COMPOSE_PROJECT_NAME"] = "doublestack-shop"
+                    env["COMPOSE_PROJECT_NAME"] = "fan-shop"
 
                     deployment_logs = []
                     deploy_started_at = time.time()
@@ -2693,7 +2693,7 @@ def notify_apprise(title: str, body: str, level: str = "info", category: str = "
 def test_apprise_notification() -> Dict:
     """同步发送测试消息，使设置页能给出即时可见的连接结果。"""
     return _post_apprise_notification(
-        "双栈商店测试通知",
+        "非凡商店测试通知",
         "Apprise 通知配置可用，后续部署结果将推送到此处。",
         "success",
     )

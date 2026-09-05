@@ -713,14 +713,14 @@ def generate_update_script(latest_version):
     os.makedirs(script_dir, exist_ok=True)
     
     script_content = f"""#!/bin/bash
-# Double Stack Store 更新脚本
+# Fan Shop 更新脚本
 # 目标版本: {latest_version}
 # 当前版本: {VERSION}
 
 set -e
 
 echo "======================================"
-echo "  Double Stack Store 更新脚本"
+echo "  Fan Shop 更新脚本"
 echo "  当前版本: {VERSION}"
 echo "  目标版本: {latest_version}"
 echo "======================================"
@@ -728,10 +728,10 @@ echo "======================================"
 # 1. 获取当前容器信息
 echo ""
 echo "[1/6] 正在获取当前容器配置..."
-CONTAINER_NAME=$(docker ps --filter "name=doublestack-shop" --format "{{{{.Names}}}}")
+CONTAINER_NAME=$(docker ps --filter "name=fan-shop" --format "{{{{.Names}}}}")
 
 if [ -z "$CONTAINER_NAME" ]; then
-    echo "错误：未找到运行中的 doublestack-shop 容器！"
+    echo "错误：未找到运行中的 fan-shop 容器！"
     exit 1
 fi
 

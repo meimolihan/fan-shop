@@ -1,8 +1,8 @@
-name: doublestack-shop
+name: fan-shop
 services:
-  doublestack-shop:
-    image: lastthree/doublestack-shop:v2.1.4
-    container_name: doublestack-shop
+  fan-shop:
+    image: mobufan/fan-shop:latest
+    container_name: fan-shop
     ports:
       - "8000:8001"
     volumes:

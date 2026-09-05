@@ -14,7 +14,7 @@ from .routes import router
 from .ai import router as ai_router
 from .version import VERSION
 
-app = FastAPI(title="双栈商店 API", version=VERSION)
+app = FastAPI(title="非凡商店 API", version=VERSION)
 CORS_ORIGINS = [
     origin.strip() for origin in os.getenv(
         "CORS_ORIGINS", "http://localhost:8000,http://localhost:8001"

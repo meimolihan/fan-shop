@@ -1,4 +1,4 @@
-# Double Stack Store (双栈商店)
+# Fan Shop (非凡商店)
 
 一个基于 Docker 的容器管理平台，支持一键部署 Compose 文件、容器管理、备份恢复、仓库管理等实用功能。
 
@@ -29,11 +29,11 @@
 
 适用于飞牛 fnOS，安装和运行由应用中心管理：
 
-1. 从 GitHub Releases 下载 `doublestack-shop-2.1.4.fpk`。
+1. 从 GitHub Releases 下载 `fan-shop-2.1.4.fpk`。
 2. 打开飞牛 fnOS 的「应用中心」，选择「手动安装」。
 3. 选择下载的 `.fpk` 文件并按向导完成安装。
 4. 在安装向导中设置访问端口，以及数据、仓库、脚本、备份、日志和镜像目录。
-5. 安装完成后，从飞牛 fnOS 桌面或应用中心打开「双栈商店」，应用会在浏览器中访问配置的端口。
+5. 安装完成后，从飞牛 fnOS 桌面或应用中心打开「非凡商店」，应用会在浏览器中访问配置的端口。
 
 卸载时可以选择保留数据，或删除安装时配置的全部自定义目录。建议升级或重装前先保留重要数据备份。
 
@@ -42,15 +42,15 @@
 复制命令即可一键部署
 
 ```bash
-if [ -f /usr/bin/curl ]; then curl -sSO https://raw.githubusercontent.com/Double-Stack-Workshop/Compose-File/main/Scripts/install.sh; else wget -O install.sh https://raw.githubusercontent.com/Double-Stack-Workshop/Compose-File/main/Scripts/install.sh; fi && bash install.sh && rm -f install.sh
+if [ -f /usr/bin/curl ]; then curl -sSO https://raw.githubusercontent.com/meimolihan/fan-shop/main/Scripts/install.sh; else wget -O install.sh https://raw.githubusercontent.com/meimolihan/fan-shop/main/Scripts/install.sh; fi && bash install.sh && rm -f install.sh
 ```
 
 ### 方式三：Compose 部署
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/Double-Stack-Workshop/doublestack-shop.git
-cd doublestack-shop
+git clone https://github.com/meimolihan/fan-shop.git
+cd fan-shop
 
 # 2. 启动服务（从 Docker Hub 拉取镜像）
 docker compose up -d
@@ -67,7 +67,7 @@ mkdir -p ./backend/data ./backend/repos ./backend/scripts ./backend/backup ./bac
 
 # 启动容器
 docker run -d \
-  --name doublestack-shop \
+  --name fan-shop \
   -p 8000:8001 \
   -v ./backend/data:/app/data \
   -v ./backend/repos:/app/repos \
@@ -83,7 +83,7 @@ docker run -d \
   -e PYTHONUNBUFFERED=1 \
   --privileged \
   --restart unless-stopped \
-  lastthree/doublestack-shop:v2.1.4
+  mobufan/fan-shop:v2.1.4
 
 # 访问应用
 # 打开浏览器访问：http://localhost:8000
@@ -122,7 +122,7 @@ docker run -d \
 ## 项目结构
 
 ```
-doublestack-shop/
+fan-shop/
 ├── Dockerfile              # Docker 镜像构建文件
 ├── docker-compose.yml      # Docker Compose 运行配置（直接拉取发布镜像）
 ├── backend/
@@ -215,5 +215,5 @@ MIT License
 
 ## 联系方式
 
-- GitHub: https://github.com/Double-Stack-Workshop/doublestack-shop
-- Docker Hub: https://hub.docker.com/r/lastthree/doublestack-shop
+- GitHub: https://github.com/meimolihan/fan-shop
+- Docker Hub: https://hub.docker.com/r/mobufan/fan-shop

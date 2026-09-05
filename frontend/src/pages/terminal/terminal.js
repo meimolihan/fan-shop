@@ -51,7 +51,7 @@ function initTerminal() {
         term.focus();
     }, 100);
 
-    term.writeln('\x1b[1;32m(Double Stack Store Terminal)\x1b[0m');
+    term.writeln('\x1b[1;32m(Fan Shop Terminal)\x1b[0m');
     term.writeln('\x1b[33m点击 "连接" 按钮连接到宿主主机终端\x1b[0m');
     term.writeln('');
 
