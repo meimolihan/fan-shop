@@ -75,7 +75,10 @@ async function loadRecommendations() {
         const availableFiles = {};
         
         files.forEach(file => {
-            const baseName = file.name.replace('.yml', '').replace('.yaml', '').toLowerCase();
+            const baseName = (file.path || file.name)
+                .replace(/\.(yml|yaml)$/i, '')
+                .split('/')[0]
+                .toLowerCase();
             availableFiles[baseName] = file.name;
         });
         

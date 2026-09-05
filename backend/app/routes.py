@@ -459,14 +459,14 @@ async def list_repo_files(repo_name: str):
         return files
     raise HTTPException(status_code=404, detail="仓库不存在")
 
-@router.get("/repos/{repo_name}/files/{file_name}")
+@router.get("/repos/{repo_name}/files/{file_name:path}")
 async def read_file_content(repo_name: str, file_name: str):
     yml_content = get_yml_content(repo_name, file_name)
     if yml_content:
         return yml_content
     raise HTTPException(status_code=404, detail="文件不存在")
 
-@router.put("/repos/{repo_name}/files/{file_name}")
+@router.put("/repos/{repo_name}/files/{file_name:path}")
 async def update_file_content(repo_name: str, file_name: str, request: SaveFileRequest):
     if save_file_content(repo_name, file_name, request.content):
         log_service.success(f"文件保存成功: {repo_name}/{file_name}", 'file')

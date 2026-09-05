@@ -467,6 +467,9 @@ SCRIPTS_DIR = (APP_ROOT / "scripts").resolve()
 SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
 MANAGED_APPLICATION_SCRIPT_NAMES = {"update_app.sh", "upgrade_docker_compose_to_v2.sh"}
 
+HOST_MOUNT = Path(os.getenv("HOST_MOUNT", "/host"))
+FNOS_DOCKER_ROOT = os.getenv("FNOS_DOCKER_ROOT", "/vol1/1000/Docker")
+
 DATA_DIR = Path(os.getenv("DATA_DIR", APP_ROOT / "data")).resolve()
 DATA_DIR.mkdir(exist_ok=True)
 REPOS_JSON_PATH = DATA_DIR / "repos.json"
@@ -772,6 +775,47 @@ def _repo_directory(repo: RepoInfo) -> Path:
     return _repo_storage_root(repo.repo_type) / repo_dir_name
 
 
+def _restructure_flat_compose_files(directory: Path) -> None:
+    """把仓库目录下扁平的 *.yml/*.yaml 重构为 <应用名>/docker-compose.yml。
+
+    仅处理顶层扁平文件；已位于子目录内的文件保持不变。
+    """
+    for pattern in ("*.yml", "*.yaml"):
+        for yml_path in list(directory.glob(pattern)):
+            if not yml_path.is_file():
+                continue
+            app_dir = directory / yml_path.stem
+            if app_dir.exists():
+                continue
+            app_dir.mkdir()
+            yml_path.replace(app_dir / "docker-compose.yml")
+
+
+def _mirror_compose_to_host(repo_dir: Path) -> int:
+    """把仓库中每个应用的 compose 文件镜像到宿主机 Docker 应用目录。
+
+    仅在宿主机根目录已挂载（/host/vol1 存在）时执行，返回镜像成功的文件数。
+    应用名取相对路径的首段；扁平文件则取文件名去掉扩展名。
+    """
+    host_root = HOST_MOUNT / FNOS_DOCKER_ROOT.lstrip("/")
+    if not host_root.exists():
+        return 0
+    mirrored = 0
+    for yml_path in repo_dir.rglob("*"):
+        if not yml_path.is_file() or yml_path.suffix not in (".yml", ".yaml"):
+            continue
+        parts = yml_path.relative_to(repo_dir).parts
+        app_name = parts[0] if len(parts) >= 2 else yml_path.stem
+        target = host_root / app_name / "docker-compose.yml"
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(yml_path, target)
+            mirrored += 1
+        except OSError as exc:
+            print(f"镜像 compose 到宿主机失败: {exc}")
+    return mirrored
+
+
 def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: str = "compose", max_retries: int = 3) -> Dict:
     """Synchronize a repository while keeping its Git metadata out of mapped files."""
     repo_name = get_repo_name_from_url(repo_url)
@@ -867,6 +911,7 @@ def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: s
                             raise ValueError("仓库归档包含不安全的文件路径")
                     if repo_type == "compose":
                         archive.extractall(temp_dir)
+                        _restructure_flat_compose_files(temp_dir)
                     else:
                         for member in archive.getmembers():
                             if member.isfile() and member.name.endswith(".sh"):
@@ -880,6 +925,9 @@ def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: s
                         repo_dir.replace(backup_dir)
                     temp_dir.replace(repo_dir)
                     shutil.rmtree(backup_dir, ignore_errors=True)
+                    mirrored = _mirror_compose_to_host(repo_dir)
+                    if mirrored:
+                        print(f"已同步 {mirrored} 个 compose 文件到宿主机 {FNOS_DOCKER_ROOT}")
                 else:
                     state = _load_script_repos_state()
                     state_key = _script_repo_state_key(repo_url, branch, local_path)
@@ -1052,6 +1100,11 @@ def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: s
             "status": "error"
         }
 
+def _relative_compose_path(yml_path: Path, repo_dir: Path) -> str:
+    """返回 yml 文件相对于仓库根的路径（统一使用正斜杠）。"""
+    return str(yml_path.relative_to(repo_dir)).replace("\\", "/")
+
+
 def scan_yml_files(repo_dir: Path, local_path: str = "") -> List[YmlFile]:
     yml_files = []
     
@@ -1061,28 +1114,38 @@ def scan_yml_files(repo_dir: Path, local_path: str = "") -> List[YmlFile]:
         if not scan_dir.exists():
             scan_dir = repo_dir
     
+    seen = set()
     for yml_path in scan_dir.rglob("*.yml"):
+        if not yml_path.is_file():
+            continue
         try:
-            with open(yml_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                yml_files.append(YmlFile(
-                    name=yml_path.name,
-                    path=str(yml_path.relative_to(repo_dir)),
-                    content=content
-                ))
+            relative = _relative_compose_path(yml_path, repo_dir)
+            if relative in seen:
+                continue
+            seen.add(relative)
+            content = yml_path.read_text(encoding='utf-8')
+            yml_files.append(YmlFile(
+                name=relative,
+                path=relative,
+                content=content
+            ))
         except Exception:
             continue
             
     for yml_path in scan_dir.rglob("*.yaml"):
+        if not yml_path.is_file():
+            continue
         try:
-            with open(yml_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                if yml_path.name not in [y.name for y in yml_files]:
-                    yml_files.append(YmlFile(
-                        name=yml_path.name,
-                        path=str(yml_path.relative_to(repo_dir)),
-                        content=content
-                    ))
+            relative = _relative_compose_path(yml_path, repo_dir)
+            if relative in seen:
+                continue
+            seen.add(relative)
+            content = yml_path.read_text(encoding='utf-8')
+            yml_files.append(YmlFile(
+                name=relative,
+                path=relative,
+                content=content
+            ))
         except Exception:
             continue
     

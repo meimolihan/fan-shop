@@ -397,13 +397,18 @@ async function viewRepo(repoName) {
             const fileLabel = isScriptRepo ? '脚本' : 'YML 文件';
             let ymlList = '';
             if (repo.yml_files && repo.yml_files.length > 0) {
-                ymlList = repo.yml_files.map(file => `
+                ymlList = repo.yml_files.map(file => {
+                    const displayName = file.path && file.path.includes('/')
+                        ? file.path.split('/')[0]
+                        : file.name;
+                    return `
                     <div class="yml-item">
                         <i class="fas ${isScriptRepo ? 'fa-terminal' : 'fa-file-code'}"></i>
-                        <span>${file.name}</span>
+                        <span>${displayName}</span>
                         <span class="yml-path">${file.path}</span>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             } else {
                 ymlList = `<p class="no-yml">未找到 ${fileLabel}</p>`;
             }

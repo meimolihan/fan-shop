@@ -1,6 +1,7 @@
 name: fan-shop
 services:
   fan-shop:
+    build: .
     image: mobufan/fan-shop:latest
     container_name: fan-shop
     ports:
