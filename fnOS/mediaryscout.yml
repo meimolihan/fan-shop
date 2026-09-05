@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mediatrack-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - /vol1/1000/Docker/postgres:/var/lib/postgresql/data    
+    environment:
+      POSTGRES_DB: mediatrack
+      POSTGRES_USER: mediatrack
+      POSTGRES_PASSWORD: mediatrack
+    restart: always
+    networks:
+      - mediatrack-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mediatrack -d mediatrack"]
+      interval: 5s
+      timeout: 3s
+      retries: 12      
+
+  pansou-web:
+    image: ghcr.io/fish2018/pansou-web:latest
+    container_name: pansou-web
+    ports:
+      - "8888:80"
+    volumes:
+      - /vol1/1000/Docker/pansou-web:/app/data
+    environment:
+      - PANSOU_PORT=8888
+      - CACHE_PATH=/app/data/cache
+      - LOG_PATH=/app/data/logs
+      - AUTH_ENABLED=true
+      - AUTH_USERS=admin:password
+      - AUTH_TOKEN_EXPIRY=24
+      - AUTH_JWT_SECRET=72d2f01e7819c365894b2136ac70d24807f297097e857034d82577d91234abcd      
+    restart: always
+    networks:
+      - mediatrack-network
+
+  mediatrack:
+    image: mediatrack:v1.4.1
+    container_name: mediatrack
+    ports:
+      - "3000:3000"
+    environment:
+      - MEDIA_TRACK_POSTGRES_URL=postgres://mediatrack:mediatrack@127.0.0.1:5432/mediatrack
+      - PANSOU_BASE_URL=http://127.0.0.1:8888
+      - MEDIA_TRACK_SEARCH_PROVIDER=tmdb
+      - MEDIA_TRACK_WORKFLOW_ADAPTER=pansou
+      - MEDIA_TRACK_STORAGE_ADAPTER=quark
+      - MEDIA_TRACK_AGENT_ADAPTER=vercel-ai
+      - MEDIA_TRACK_DEMO_SEED=0
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    restart: always
+    networks:
+      - mediatrack-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      pansou-web:
+        condition: service_started
+
+networks:
+  mediatrack-network:
+    external: true
+    name: mediatrack

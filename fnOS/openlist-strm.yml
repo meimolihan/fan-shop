@@ -1,0 +1,13 @@
+services:
+  openlist-strm:
+    image: hienao6/ostrm:latest
+    container_name: openlist-strm
+    ports:
+      - 30050:80
+    volumes:
+      - /vol1/1000/Docker/openlist-strm/data/config:/maindata/config
+      - /vol1/1000/Docker/openlist-strm/data/db:/maindata/db
+      - /vol1/1000/Docker/openlist-strm/logs:/maindata/log
+      - /vol1/1000/Strm:/app/backend/strm
+    network_mode: bridge
+    restart: always

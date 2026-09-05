@@ -1,0 +1,55 @@
+services:
+  romm:
+    image: rommapp/romm:latest
+    container_name: romm
+    ports:
+      - 8085:8080
+    volumes:
+      - /vol1/1000/Docker/romm/resources:/romm/resources
+      - /vol1/1000/Docker/romm/library:/romm/library
+      - /vol1/1000/Docker/romm/assets:/romm/assets
+      - /vol1/1000/Docker/romm/config:/romm/config
+    environment:
+      - ROMM_DB_DRIVER=mariadb
+      - DB_HOST=romm-db
+      - DB_PORT=3306
+      - DB_NAME=romm
+      - DB_USER=romm-user
+      - DB_PASSWD=password
+      - ROMM_AUTH_SECRET_KEY=7afc95c13f244e6c4d9213690a982997070383b9e8a9d688a2f6d182e7ebc8c0
+      - IGDB_CLIENT_ID=
+      - IGDB_CLIENT_SECRET=
+      - HASHEOUS_API_ENABLED=true
+    restart: always
+    networks:
+      - romm-network
+    depends_on:
+      romm-db:
+        condition: service_healthy
+        restart: true
+  romm-db:
+    image: mariadb:11
+    container_name: romm-db
+    ports:
+      - 3306:3306
+    volumes:
+      - /vol1/1000/Docker/mariadb:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=123456
+      - MARIADB_DATABASE=romm
+      - MARIADB_USER=romm-user
+      - MARIADB_PASSWORD=password
+    restart: always
+    networks:
+      - romm-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 30s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  romm-network:
+    external: true
+    name: romm

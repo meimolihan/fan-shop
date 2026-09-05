@@ -1,0 +1,20 @@
+services:
+  trek:
+    image: mauriceboe/trek:latest
+    container_name: trek
+    ports:
+      - 3000:3000
+    volumes:
+      - /vol1/1000/Docker/trek/data:/app/data
+      - /vol1/1000/Docker/trek/uploads:/app/uploads
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - ENCRYPTION_KEY=b04ddb6be81aebfa714f2fcdc7f504418a18a4a7b05afa723f4149c631aba71e
+      - TZ=Asia/Shanghai
+      - LOG_LEVEL=info
+      - ADMIN_EMAIL=admin@qq.com
+      - ADMIN_PASSWORD=password
+      - COOKIE_SECURE=false      
+    restart: always
+    network_mode: bridge

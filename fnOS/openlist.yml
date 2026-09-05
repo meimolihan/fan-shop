@@ -1,0 +1,13 @@
+services:
+  openlist:
+    image: openlistteam/openlist:latest
+    container_name: openlist
+    ports:
+      - 24005:5244
+    volumes:
+      - /vol1/1000/Docker/openlist/data:/opt/openlist/data
+    environment:
+      - UMASK=022
+    user: 0:0
+    restart: always
+    network_mode: bridge

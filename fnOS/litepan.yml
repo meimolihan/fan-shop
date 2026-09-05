@@ -1,0 +1,14 @@
+services:
+  litepan:
+    image: ponphil/litepan:beta
+    container_name: litepan
+    ports:
+      - 5211:5211
+    volumes:
+      - /vol1/1000/Docker/litepan/data:/app/data
+      - /vol1/1000/Docker/litepan/strm:/app/strm
+      - /vol1/1000/Docker/litepan/mounts:/app/mounts:shared    
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always
+    network_mode: bridge

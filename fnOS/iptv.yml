@@ -1,0 +1,14 @@
+services:
+  iptv:
+    image: akiralereal/iptv:latest
+    container_name: iptv
+    init: true
+    ports:
+      - 1905:1905
+    environment:
+      - mport=1905
+      - mpass=password
+    volumes:
+      - /vol1/1000/Docker/iptv/data:/migu/data
+    restart: always
+    network_mode: bridge

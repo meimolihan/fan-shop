@@ -1,0 +1,16 @@
+services:
+  apprise:
+    image: caronc/apprise:latest
+    container_name: apprise
+    ports:
+      - 8000:8000
+    volumes:
+      - /vol1/1000/Docker/apprise/config:/config
+      - /vol1/1000/Docker/apprise/plugin:/plugin
+      - /vol1/1000/Docker/apprise/attach:/attach
+    environment:
+      - APPRISE_STATEFUL_MODE=simple
+      - APPRISE_ADMIN=y
+      - TZ=Asia/Shanghai
+    restart: always
+    network_mode: bridge

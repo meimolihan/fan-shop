@@ -1,0 +1,14 @@
+services:
+  mdc-ng:
+    image: mdcng/mdc:latest
+    container_name: mdc-ng
+    ports:
+      - 9208:9208
+    volumes:
+      - /vol1/1000/Docker/mdc-ng/data:/config
+      - /vol1/1000/Video:/media 
+    environment:
+      - MDC_USERNAME=admin
+      - MDC_PASSWORD=password 
+    restart: always
+    network_mode: bridge

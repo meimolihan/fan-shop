@@ -1,0 +1,14 @@
+services:
+  mediahelper:
+    image: rongyunmu/mediahelp
+    container_name: mediahelper
+    ports:
+      - 3300:80
+      - 8091:8091
+    volumes:
+      - /vol1/1000/Docker/mediahelper/db:/app/backend/db
+      - /vol1/1000/Strm:/app/backend/strm
+      - /vol1/1000/Docker/mediahelper/logs:/app/backend/logs
+      - /vol1/1000/Docker/mediahelper/font:/app/backend/utils/library_poster/font
+    restart: always
+    network_mode: bridge
