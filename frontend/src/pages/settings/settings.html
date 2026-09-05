@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双栈商店 - 系统设置</title>
+    <link rel="icon" href="/src/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="/src/components/common/buttons.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <div class="dashboard-container" id="appContainer">
+        <!-- 侧边栏将通过JS动态加载 -->
+    
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>系统设置</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <img src="/src/images/logo.png" alt="用户头像">
+                        </div>
+                        <span class="username" id="currentUsername">加载中...</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <section class="version-section">
+                    <div class="version-card">
+                        <div class="version-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="version-info">
+                            <h3>应用版本</h3>
+                            <p class="version-number" id="currentVersion">v1.0.0</p>
+                            <p class="version-date">构建时间: <span id="buildDate">2026-05-08</span></p>
+                            <div id="updateStatus" class="update-status"></div>
+                        </div>
+                        <div class="version-actions">
+                            <button id="checkUpdateBtn" class="check-update-btn" onclick="checkForUpdates()">
+                                <i class="fas fa-refresh"></i>
+                                <span>检查更新</span>
+                            </button>
+                            <a href="https://github.com/Double-Stack-Workshop/doublestack-shop" target="_blank" rel="noopener noreferrer" class="github-btn" title="访问项目 GitHub 仓库">
+                                <i class="fab fa-github"></i>
+                                <span>项目地址</span>
+                            </a>
+                            <button id="clearCacheBtn" class="check-update-btn" type="button" onclick="clearApplicationCache()">
+                                <i class="fas fa-broom"></i>
+                                <span>清理缓存</span>
+                            </button>
+                        </div>
+                    </div>
+            </section>
+            
+            <section class="domain-section">
+                <div class="section-header">
+                    <h2>全局域名/IP配置</h2>
+                    <button id="saveDomainBtn" class="save-btn" onclick="saveGlobalDomain()">
+                        <i class="fas fa-save"></i>
+                        <span>保存配置</span>
+                    </button>
+                </div>
+                
+                <div class="domain-card">
+                    <div class="domain-info">
+                        <div class="form-group">
+                            <label for="globalDomain">全局域名/IP地址</label>
+                            <input type="text" id="globalDomain" placeholder="localhost 或 https://example.com">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="proxy-section">
+                <div class="section-header">
+                    <h2>代理配置</h2>
+                    <button id="saveProxyBtn" class="save-btn" onclick="saveProxyConfig()">
+                        <i class="fas fa-save"></i>
+                        <span>保存配置</span>
+                    </button>
+                </div>
+                
+                <div class="proxy-card">
+                    <div class="proxy-info">
+                        <div class="form-group">
+                            <label for="httpProxy">HTTP代理</label>
+                            <input type="text" id="httpProxy" placeholder="http://localhost:port">
+                        </div>
+                        <div class="form-group">
+                            <label for="httpsProxy">HTTPS代理</label>
+                            <input type="text" id="httpsProxy" placeholder="https://localhost:port">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="ai-settings-section" id="aiSettings">
+                <form id="aiConfigForm">
+                    <div class="section-header">
+                        <h2>OpenAI配置</h2>
+                        <div class="section-actions ai-config-actions">
+                            <button type="button" class="save-btn" id="testAiBtn" disabled><i class="fas fa-paper-plane" aria-hidden="true"></i><span>测试连接</span></button>
+                            <button type="submit" class="save-btn" id="saveAiBtn" disabled><i class="fas fa-save" aria-hidden="true"></i><span>保存配置</span></button>
+                        </div>
+                    </div>
+                    <fieldset id="aiConfigFields" disabled>
+                        <label class="ai-toggle-label"><input type="checkbox" id="aiEnabled"> 启用 AI 对话</label>
+                        <div class="form-group">
+                            <label for="aiBaseUrl">Base URL</label>
+                            <input type="url" id="aiBaseUrl" required maxlength="2048" placeholder="https://api.openai.com/v1">
+                        </div>
+                        <div class="form-group">
+                            <label for="aiModel">模型名称</label>
+                            <input type="text" id="aiModel" maxlength="200" placeholder="Qwen/Qwen3.5-27B">
+                        </div>
+                        <div class="form-group">
+                            <label for="aiApiKey">API Key</label>
+                            <input type="password" id="aiApiKey" maxlength="4096" autocomplete="new-password" placeholder="填写 API Key">
+                        </div>
+                    </fieldset>
+                    <p id="aiConfigStatus" class="ai-config-status" role="status" aria-live="polite">正在读取 AI 配置…</p>
+                </form>
+            </section>
+
+            <section class="apprise-section">
+                <div class="section-header">
+                    <h2>Apprise 通知</h2>
+                    <div class="section-actions">
+                        <button id="testAppriseBtn" class="save-btn" type="button" onclick="testAppriseNotification()">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>发送测试通知</span>
+                        </button>
+                        <button id="saveAppriseBtn" class="save-btn" onclick="saveAppriseConfig()">
+                            <i class="fas fa-save"></i>
+                            <span>保存配置</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="apprise-card">
+                    <label class="toggle-label" for="appriseEnabled">
+                        <input type="checkbox" id="appriseEnabled">
+                        <span>启用通知</span>
+                    </label>
+                    <div class="form-group">
+                        <label for="appriseUrl">Apprise 通知地址</label>
+                        <input type="url" id="appriseUrl" placeholder="http://localhost:port/notify/{key}">
+                    </div>
+                    <fieldset class="notification-events">
+                        <legend>通知类型</legend>
+                        <label><input type="checkbox" name="appriseEvent" value="deploy"> 容器部署</label>
+                        <label><input type="checkbox" name="appriseEvent" value="repo"> 仓库同步</label>
+                        <label><input type="checkbox" name="appriseEvent" value="image"> 镜像拉取</label>
+                        <label><input type="checkbox" name="appriseEvent" value="backup"> 容器备份与恢复</label>
+                        <label><input type="checkbox" name="appriseEvent" value="docker"> Docker 服务重启</label>
+                    </fieldset>
+                </div>
+            </section>
+            
+            <section class="mirror-section">
+                <div class="section-header">
+                    <h2>Docker 加速源</h2>
+                    <button id="saveMirrorBtn" class="save-btn" onclick="saveDockerMirrors()">
+                        <i class="fas fa-save"></i>
+                        <span>保存并重启 Docker</span>
+                    </button>
+                </div>
+                
+                <div class="mirror-card">
+                    <div class="mirror-info">
+                        <div class="mirror-list" id="mirrorList" class="drag-list" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+                            <div class="mirror-empty">加载中...</div>
+                        </div>
+                        <div class="mirror-add-form">
+                            <input type="text" id="newMirror" placeholder="https://mirror.example.com">
+                            <button class="add-mirror-btn" onclick="addMirror()">
+                                <i class="fas fa-plus"></i>
+                                添加
+                            </button>
+                        </div>
+                        <div class="mirror-tips">
+                            <i class="fas fa-info-circle"></i>
+                            常用加速源：
+                            <a href="javascript:void(0)" onclick="addPresetMirror('https://mirror.ccs.tencentyun.com')">腾讯云</a> |
+                            <a href="javascript:void(0)" onclick="addPresetMirror('https://hub-mirror.c.163.com')">网易</a> |
+                            <a href="javascript:void(0)" onclick="addPresetMirror('https://docker.mirrors.ustc.edu.cn')">中科大</a> |
+                            <a href="javascript:void(0)" onclick="addPresetMirror('https://registry.docker-cn.com')">Docker CN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            </div>
+        </main>
+        <div id="messageToast" class="message-toast"></div>
+    </div>
+    
+    <script src="/src/components/common/page-common.js"></script>
+    <script src="/src/components/common/cache.js"></script>
+    <script src="settings.js"></script>
+    <script src="settings-ai.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双栈商店 - 容器推荐</title>
+    <link rel="icon" href="/src/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="./recommend.css">
+</head>
+<body>
+    <div class="dashboard-container" id="appContainer">
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>容器推荐</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <img src="/src/images/logo.png" alt="用户头像">
+                        </div>
+                        <span class="username" id="currentUsername">加载中...</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <section class="recommend-section">
+                    <div class="section-header">
+                        <h2>推荐容器</h2>
+                    </div>
+                    
+                    <div class="recommend-grid" id="recommendGrid">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>加载推荐容器中...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/src/components/common/page-common.js"></script>
+    <script src="./recommend.js"></script>
+</body>
+</html>

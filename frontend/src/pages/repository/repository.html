@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双栈商店 - 仓库管理</title>
+    <link rel="icon" href="/src/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="./repository.css">
+</head>
+<body>
+    <div class="dashboard-container" id="appContainer">
+        <!-- 侧边栏将通过JS动态加载 -->
+        
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>仓库管理</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <img src="/src/images/logo.png" alt="用户头像">
+                        </div>
+                        <span class="username" id="currentUsername">加载中...</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <section class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-icon total"><i class="fab fa-github"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="totalRepoCount">0</span><span class="stat-label">总仓库</span></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon synced"><i class="fas fa-check"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="syncedRepoCount">0</span><span class="stat-label">已同步仓库</span></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon pending"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="pendingRepoCount">0</span><span class="stat-label">未同步仓库</span></div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon failed"><i class="fas fa-triangle-exclamation"></i></div>
+                        <div class="stat-info"><span class="stat-value" id="failedRepoCount">0</span><span class="stat-label">同步失败仓库</span></div>
+                    </div>
+                </section>
+
+                <section class="repo-actions-bar">
+                    <button id="addRepoBtn" class="add-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>添加仓库</span>
+                    </button>
+                </section>
+                
+                <section class="repo-list">
+                    <div class="filter-bar">
+                        <div class="filter-group">
+                            <label for="filterSelect">状态筛选:</label>
+                            <select id="filterSelect">
+                                <option value="all">全部</option>
+                                <option value="active">已同步</option>
+                                <option value="syncing">同步中</option>
+                                <option value="pending">未同步</option>
+                                <option value="error">同步失败</option>
+                            </select>
+                        </div>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="搜索仓库名称...">
+                        </div>
+                    </div>
+                    <div class="repo-list-content" id="repoList">
+                        <div class="empty-state">
+                            <i class="fab fa-github"></i>
+                            <p>暂无仓库，点击“添加仓库”开始使用</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <div id="addRepoModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>添加仓库</h2>
+                    <button class="modal-close" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="addRepoForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="repoName">仓库名称 <span class="optional">(可选)</span></label>
+                        <input type="text" id="repoName" placeholder="自定义仓库名称">
+                    </div>
+                    <div class="form-group">
+                        <label>仓库类型</label>
+                        <input type="hidden" id="repoType" value="compose">
+                        <div class="repo-type-selector" role="radiogroup" aria-label="仓库类型">
+                            <button type="button" class="repo-type-option active" data-repo-type="compose" role="radio" aria-checked="true">
+                                <i class="fas fa-cubes"></i>
+                                <span><strong>Compose</strong><small>扫描 YML，用于容器部署</small></span>
+                            </button>
+                            <button type="button" class="repo-type-option" data-repo-type="script" role="radio" aria-checked="false">
+                                <i class="fas fa-terminal"></i>
+                                <span><strong>Scripts</strong><small>扫描 .sh，直接保存到 scripts</small></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="repoUrl">仓库地址</label>
+                        <input type="text" id="repoUrl" placeholder="https://github.com/username/repo">
+                    </div>
+                    <div class="form-group">
+                        <label for="branch">分支名称</label>
+                        <input type="text" id="branch" placeholder="main" value="main">
+                    </div>
+                    <div class="form-group">
+                        <label for="localPath">仓库内路径 <span class="optional">(可选)</span></label>
+                        <input type="text" id="localPath" placeholder="留空则扫描整个仓库">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeModal()">取消</button>
+                        <button type="submit" class="btn-submit">添加</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/src/components/common/page-common.js"></script>
+    <script src="./repository.js"></script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+const { API_BASE_URL, apiFetch } = window.AppPage;
+
+async function loadVersion() {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/system/version`);
+        const result = await response.json();
+        if (result.current_version) {
+            document.getElementById('currentVersion').textContent = result.current_version;
+        }
+        if (result.build_date) {
+            document.getElementById('buildDate').textContent = result.build_date;
+        }
+    } catch (error) {
+        console.error('Failed to load version:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    initSettingsCollapsibles();
+    await loadSidebar();
+    
+    if (!checkLogin()) return;
+    loadUserInfo();
+    loadVersion();
+    loadProxyConfig();
+    loadAppriseConfig();
+    loadGlobalDomain();
+    loadDockerMirrors();
+});
+
+function initSettingsCollapsibles() {
+    const sections = document.querySelectorAll('.content-area > section:not(.version-section)');
+    sections.forEach((section, index) => {
+        const header = section.querySelector('.section-header');
+        if (!header || header.querySelector('.settings-collapse-toggle')) return;
+
+        const container = header.parentElement;
+        const content = document.createElement('div');
+        content.className = 'settings-collapse-content';
+        content.id = `settingsCollapseContent${index + 1}`;
+        while (header.nextSibling) content.appendChild(header.nextSibling);
+        container.appendChild(content);
+
+        const title = header.querySelector('h2')?.textContent.trim() || '配置';
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.className = 'app-button app-button-secondary app-button-icon settings-collapse-toggle';
+        toggle.setAttribute('aria-controls', content.id);
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', `收起${title}`);
+        toggle.title = `收起${title}`;
+        toggle.innerHTML = '<i class="fas fa-chevron-up" aria-hidden="true"></i>';
+        header.appendChild(toggle);
+        section.classList.add('settings-collapsible');
+
+        const setExpanded = expanded => {
+            content.hidden = !expanded;
+            section.classList.toggle('is-collapsed', !expanded);
+            toggle.setAttribute('aria-expanded', String(expanded));
+            toggle.setAttribute('aria-label', `${expanded ? '收起' : '展开'}${title}`);
+            toggle.title = `${expanded ? '收起' : '展开'}${title}`;
+        };
+        const toggleSection = () => setExpanded(content.hidden);
+        toggle.addEventListener('click', event => {
+            event.stopPropagation();
+            toggleSection();
+        });
+        header.addEventListener('click', event => {
+            if (!event.target.closest('button, a, input, select, textarea, label')) toggleSection();
+        });
+        setExpanded(window.location.hash === `#${section.id}`);
+    });
+}
+
+async function loadSidebar() {
+    return window.AppPage.loadSidebar('settings');
+}
+
+function showMessage(message, type = 'info') {
+    const toast = document.getElementById('messageToast');
+    toast.textContent = message;
+    toast.className = `message-toast ${type} show`;
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+async function checkForUpdates() {
+    const btn = document.getElementById('checkUpdateBtn');
+    const statusEl = document.getElementById('updateStatus');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 检查中...';
+    statusEl.innerHTML = '';
+    
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/system/check-update`);
+        const result = await response.json();
+        
+        if (result.success) {
+            if (result.update_available) {
+                const command = result.run_command_one_liner || '请检查宿主机 scripts 映射路径';
+                statusEl.innerHTML = `<i class="fas fa-arrow-up"></i> 有新版本可用: ${escapeHtml(result.latest_version)}<br><span style="font-size:12px;color:#666;">请先在宿主机终端运行 <code style="color:#22c55e;">sudo -i</code>，再执行：<code style="color:#22c55e;">${escapeHtml(command)}</code></span>`;
+                statusEl.className = 'update-status available';
+            } else {
+                statusEl.innerHTML = `<i class="fas fa-check"></i> 当前已是最新版本`;
+                statusEl.className = 'update-status latest';
+            }
+        } else {
+            statusEl.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${result.message}`;
+            statusEl.className = 'update-status error';
+        }
+    } catch (error) {
+        statusEl.innerHTML = `<i class="fas fa-exclamation-circle"></i> 网络错误，无法检查更新`;
+        statusEl.className = 'update-status error';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-refresh"></i> 检查更新';
+    }
+}
+
+function checkLogin() {
+    return window.AppPage.requireLogin();
+}
+
+function loadUserInfo() {
+    window.AppPage.populateUsername();
+}
+
+async function loadProxyConfig() {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/proxy`);
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                document.getElementById('httpProxy').value = result.data.http_proxy || '';
+                document.getElementById('httpsProxy').value = result.data.https_proxy || '';
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load proxy config:', error);
+    }
+}
+
+async function loadGlobalDomain() {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/global-domain`);
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                document.getElementById('globalDomain').value = result.data.global_domain || '';
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load global domain:', error);
+    }
+}
+
+async function saveProxyConfig() {
+    const httpProxy = document.getElementById('httpProxy').value.trim();
+    const httpsProxy = document.getElementById('httpsProxy').value.trim();
+    
+    const btn = document.getElementById('saveProxyBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+    
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/proxy`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ http_proxy: httpProxy, https_proxy: httpsProxy })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('代理配置保存成功', 'success');
+        } else {
+            showMessage(result.message || '保存失败', 'error');
+        }
+    } catch (error) {
+        showMessage('网络错误，请稍后重试', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> 保存配置';
+    }
+}
+
+async function loadAppriseConfig() {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/apprise`);
+        if (!response.ok) return;
+        const result = await response.json();
+        if (result.success && result.data) {
+            let notifyUrl = result.data.url || '';
+            const key = result.data.key || '';
+            if (key && !/\/notify(?:\/|$)/.test(notifyUrl)) {
+                notifyUrl = `${notifyUrl.replace(/\/$/, '')}/notify/${encodeURIComponent(key)}`;
+            }
+            document.getElementById('appriseUrl').value = notifyUrl;
+            document.getElementById('appriseEnabled').checked = Boolean(result.data.enabled);
+            document.querySelectorAll('input[name="appriseEvent"]').forEach((input) => {
+                input.checked = result.data.events?.[input.value] ?? true;
+            });
+        }
+    } catch (error) {
+        console.error('Failed to load Apprise config:', error);
+    }
+}
+
+function getApprisePayload() {
+    const events = {};
+    document.querySelectorAll('input[name="appriseEvent"]').forEach((input) => {
+        events[input.value] = input.checked;
+    });
+    return {
+        url: document.getElementById('appriseUrl').value.trim(),
+        key: '',
+        enabled: document.getElementById('appriseEnabled').checked,
+        events,
+    };
+}
+
+async function saveAppriseConfig(silent = false) {
+    const btn = document.getElementById('saveAppriseBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/apprise`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(getApprisePayload()),
+        });
+        const result = await response.json();
+        if (response.ok && result.success) {
+            if (!silent) showMessage('Apprise 通知配置保存成功', 'success');
+            return true;
+        } else {
+            showMessage(result.message || result.detail || '保存失败', 'error');
+            return false;
+        }
+    } catch (error) {
+        showMessage('网络错误，请稍后重试', 'error');
+        return false;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> 保存配置';
+    }
+}
+
+async function testAppriseNotification() {
+    if (!document.getElementById('appriseEnabled').checked) {
+        showMessage('请先启用并保存 Apprise 通知配置', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('testAppriseBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 发送中...';
+    try {
+        const saved = await saveAppriseConfig(true);
+        if (!saved) return;
+        const response = await apiFetch(`${API_BASE_URL}/apprise/test`, { method: 'POST' });
+        const result = await response.json();
+        if (response.ok && result.success) {
+            showMessage('测试通知已发送', 'success');
+        } else {
+            showMessage(result.detail || result.message || '测试通知发送失败', 'error');
+        }
+    } catch (error) {
+        showMessage('网络错误，请稍后重试', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> 发送测试通知';
+    }
+}
+
+async function saveGlobalDomain() {
+    const globalDomain = document.getElementById('globalDomain').value.trim();
+    
+    const btn = document.getElementById('saveDomainBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存中...';
+    
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/global-domain`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ global_domain: globalDomain })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('全局域名/IP配置保存成功', 'success');
+        } else {
+            showMessage(result.message || '保存失败', 'error');
+        }
+    } catch (error) {
+        showMessage('网络错误，请稍后重试', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> 保存配置';
+    }
+}
+
+// Docker 加速源管理
+let dockerMirrors = [];
+
+async function loadDockerMirrors() {
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/docker-mirrors`);
+        if (response.ok) {
+            const result = await response.json();
+            dockerMirrors = result.mirrors || [];
+            renderMirrors();
+        } else {
+            renderMirrors();
+        }
+    } catch (error) {
+        console.error('Failed to load docker mirrors:', error);
+        renderMirrors();
+    }
+}
+
+function renderMirrors() {
+    const listEl = document.getElementById('mirrorList');
+    
+    if (!dockerMirrors || dockerMirrors.length === 0) {
+        listEl.innerHTML = '<div class="mirror-empty">暂无加速源配置</div>';
+        return;
+    }
+    
+    listEl.innerHTML = dockerMirrors.map((mirror, index) => `
+        <div class="mirror-item" draggable="true" data-index="${index}" 
+             ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+            <span class="mirror-drag-handle"><i class="fas fa-grip-vertical"></i></span>
+            <span class="mirror-url">${escapeHtml(mirror)}</span>
+            <div class="mirror-actions">
+                <button class="edit-btn" onclick="editMirror(${index})">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="delete-btn" onclick="deleteMirror(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// 拖拽排序功能
+let draggedIndex = null;
+
+function handleDragStart(event) {
+    draggedIndex = parseInt(event.target.dataset.index);
+    event.target.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragEnd(event) {
+    event.target.classList.remove('dragging');
+    document.querySelectorAll('.mirror-item').forEach(item => {
+        item.classList.remove('drag-over');
+    });
+}
+
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+}
+
+function handleDrop(event) {
+    event.preventDefault();
+    
+    const target = event.target.closest('.mirror-item');
+    if (!target || draggedIndex === null) return;
+    
+    const targetIndex = parseInt(target.dataset.index);
+    
+    if (draggedIndex !== targetIndex) {
+        const movedItem = dockerMirrors.splice(draggedIndex, 1)[0];
+        dockerMirrors.splice(targetIndex, 0, movedItem);
+        renderMirrors();
+        showMessage('顺序已调整，请点击保存配置', 'success');
+    }
+    
+    draggedIndex = null;
+}
+
+function addMirror() {
+    const input = document.getElementById('newMirror');
+    const url = input.value.trim();
+    
+    if (!url) {
+        showMessage('请输入加速源地址', 'error');
+        return;
+    }
+    
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        showMessage('加速源地址必须以 http:// 或 https:// 开头', 'error');
+        return;
+    }
+    
+    if (dockerMirrors.includes(url)) {
+        showMessage('该加速源已存在', 'error');
+        return;
+    }
+    
+    dockerMirrors.push(url);
+    renderMirrors();
+    input.value = '';
+    showMessage('加速源已添加，请点击保存配置', 'success');
+}
+
+function addPresetMirror(url) {
+    if (dockerMirrors.includes(url)) {
+        showMessage('该加速源已存在', 'error');
+        return;
+    }
+    
+    dockerMirrors.push(url);
+    renderMirrors();
+    showMessage('加速源已添加，请点击保存配置', 'success');
+}
+
+function editMirror(index) {
+    const currentUrl = dockerMirrors[index];
+    const newUrl = prompt('编辑加速源地址:', currentUrl);
+    
+    if (newUrl === null) return;
+    
+    const trimmedUrl = newUrl.trim();
+    if (!trimmedUrl) {
+        showMessage('加速源地址不能为空', 'error');
+        return;
+    }
+    
+    if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
+        showMessage('加速源地址必须以 http:// 或 https:// 开头', 'error');
+        return;
+    }
+    
+    if (trimmedUrl !== currentUrl && dockerMirrors.includes(trimmedUrl)) {
+        showMessage('该加速源已存在', 'error');
+        return;
+    }
+    
+    dockerMirrors[index] = trimmedUrl;
+    renderMirrors();
+    showMessage('加速源已修改，请点击保存配置', 'success');
+}
+
+function deleteMirror(index) {
+    if (!confirm('确定要删除该加速源吗？')) {
+        return;
+    }
+    
+    dockerMirrors.splice(index, 1);
+    renderMirrors();
+    showMessage('加速源已删除，请点击保存配置', 'success');
+}
+
+async function saveDockerMirrors() {
+    if (!confirm('保存后将自动重启宿主机 Docker 服务。运行中的容器会短暂中断，本应用会在服务恢复后自动刷新。确定继续吗？')) {
+        return;
+    }
+
+    const btn = document.getElementById('saveMirrorBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 保存并重启中...';
+    
+    try {
+        const response = await apiFetch(`${API_BASE_URL}/docker-mirrors`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mirrors: dockerMirrors })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('配置已保存，正在确认 Docker 服务恢复状态…', 'success');
+            await waitForDockerRestart();
+        } else {
+            showMessage(result.message || '保存或重启失败', result.saved ? 'info' : 'error');
+        }
+    } catch (error) {
+        showMessage('网络错误，请稍后重试', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> 保存并重启 Docker';
+    }
+}
+
+function getErrorMessage(data, fallback) {
+    if (typeof data?.detail === 'string') return data.detail;
+    if (typeof data?.message === 'string') return data.message;
+    if (Array.isArray(data?.detail)) return data.detail.map((item) => item.msg).join('；');
+    return fallback;
+}
+
+async function waitForDockerRestart() {
+    const deadline = Date.now() + 60000;
+    while (Date.now() < deadline) {
+        try {
+            const response = await apiFetch(`${API_BASE_URL}/docker-mirrors/restart-status`);
+            if (response.ok) {
+                const status = await response.json();
+                if (status.state === 'ready') {
+                    showMessage('Docker 已恢复，正在刷新页面', 'success');
+                    window.location.reload();
+                    return;
+                }
+                if (status.state === 'failed') {
+                    showMessage(status.message || 'Docker 恢复失败，配置已尝试回滚', 'error');
+                    return;
+                }
+            }
+        } catch (_error) {
+            // Docker 重启期间连接中断属于预期状态，继续轮询即可。
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+    showMessage('尚未确认 Docker 恢复，请稍后刷新页面查看状态', 'error');
+}
+
+async function clearApplicationCache() {
+    const button = document.getElementById('clearCacheBtn');
+    button.disabled = true;
+    try {
+        await window.AppCache.clearCacheAndReload();
+    } catch (error) {
+        showMessage('缓存清理失败，请手动刷新页面', 'error');
+        button.disabled = false;
+    }
+}

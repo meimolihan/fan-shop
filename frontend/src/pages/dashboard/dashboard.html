@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双栈商店 - 仪表盘</title>
+    <link rel="icon" href="/src/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="/src/pages/dashboard/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container" id="appContainer">
+        <!-- 侧边栏将通过JS加载 -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>欢迎回来</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                            <div class="user-avatar">
+                                <img src="/src/images/logo.png" alt="用户头像">
+                            </div>
+                            <span class="username" id="currentUsername">加载中...</span>
+                        </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <section class="stats-section">
+                    <h2>数据统计</h2>
+                    <div class="stats-cards">
+                    <div class="card" id="repoCountCard">
+                        <div class="card-icon bg-blue">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>仓库数量</h3>
+                            <p class="card-value" id="repoCount">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card" id="deployedAppsCard">
+                        <div class="card-icon bg-green">
+                            <i class="fab fa-docker"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>已部署容器</h3>
+                            <p class="card-value" id="deployedAppsCount">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card" id="containerCountCard">
+                        <div class="card-icon bg-orange">
+                            <i class="fab fa-docker"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>运行中容器</h3>
+                            <p class="card-value" id="containerCount">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card" id="successRateCard">
+                        <div class="card-icon bg-purple">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>部署成功率</h3>
+                            <p class="card-value" id="successRate">0%</p>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+                
+                <section class="quick-actions">
+                    <h2>快捷操作</h2>
+                    <div class="action-grid">
+                        <button class="action-btn" onclick="navigateTo('repository')">
+                            <i class="fab fa-github"></i>
+                            <span>仓库管理</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('deploy')">
+                            <i class="fab fa-docker"></i>
+                            <span>容器部署</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('recommend')">
+                            <i class="fab fa-docker"></i>
+                            <span>容器推荐</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('container')">
+                            <i class="fab fa-docker"></i>
+                            <span>容器管理</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('backup')">
+                            <i class="fab fa-docker"></i>
+                            <span>容器备份</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('image')">
+                            <i class="fab fa-docker"></i>
+                            <span>镜像管理</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('ai')">
+                            <i class="fas fa-comments"></i>
+                            <span>AI 对话</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('terminal')">
+                            <i class="fas fa-terminal"></i>
+                            <span>终端</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('logs')">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>操作日志</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('users')">
+                            <i class="fas fa-user"></i>
+                            <span>用户管理</span>
+                        </button>
+                        <button class="action-btn" onclick="navigateTo('settings')">
+                            <i class="fas fa-cog"></i>
+                            <span>系统设置</span>
+                        </button>
+                    </div>
+                </section>
+                
+                <section class="host-info-section">
+                    <div class="section-header">
+                        <h2>系统信息</h2>
+                    </div>
+                    <div class="host-info-grid" id="hostInfoGrid">
+                        <div class="host-info-card loading">
+                            <div class="host-info-icon">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <div class="host-info-content">
+                                <h4>加载中...</h4>
+                                <p>正在获取系统信息</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="docker-info-section">
+                    <div class="section-header">
+                        <h2>Docker 环境信息</h2>
+                    </div>
+                    <div class="docker-info-grid" id="dockerInfoGrid">
+                        <div class="docker-info-card loading">
+                            <div class="docker-info-icon">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <div class="docker-info-content">
+                                <h4>加载中...</h4>
+                                <p>正在获取 Docker 版本信息</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="connectivity-section">
+                    <div class="section-header">
+                        <h2>连接性测试</h2>
+                    </div>
+                    <div class="connectivity-grid" id="connectivityGrid">
+                        <div class="connectivity-card loading">
+                            <div class="connectivity-icon">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <div class="connectivity-content">
+                                <h4>测试中...</h4>
+                                <p>正在测试网络连接</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section class="recent-activity">
+                    <h2>最近部署记录</h2>
+                    <div class="activity-list" id="deploymentList">
+                        <div class="activity-item empty">
+                            <div class="activity-icon info">
+                                <i class="fas fa-info"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>暂无部署记录</h4>
+                                <p>通过容器部署页面部署容器后，记录将显示在这里</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/src/components/common/page-common.js"></script>
+    <script src="./dashboard.js"></script>
+</body>
+</html>

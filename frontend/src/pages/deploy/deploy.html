@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双栈商店 - 容器部署</title>
+    <link rel="icon" href="/src/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="/src/pages/deploy/deploy.css">
+</head>
+<body>
+    <div class="deploy-container" id="appContainer">
+        <!-- 侧边栏将通过JS加载 -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>容器部署</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                            <div class="user-avatar">
+                                <img src="/src/images/logo.png" alt="用户头像">
+                            </div>
+                            <span class="username" id="currentUsername">加载中...</span>
+                        </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="select-section">
+                    <div class="section-header">
+                        <h2>选择部署配置</h2>
+                    </div>
+                    <div class="select-row">
+                        <div class="select-item">
+                            <label for="repoSelect">选择仓库</label>
+                            <select id="repoSelect" class="form-select">
+                                <option value="">请选择仓库</option>
+                            </select>
+                        </div>
+                        <div class="select-item">
+                            <label for="fileSearch">选择 YML 文件</label>
+                            <div class="search-select-wrapper">
+                                <input type="text" id="fileSearch" class="form-input search-input" placeholder="请先选择仓库" autocomplete="off" disabled>
+                                <button type="button" class="file-picker-toggle" id="filePickerToggle" aria-label="展开 YML 文件列表">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <div id="fileDropdown" class="file-dropdown is-hidden" role="listbox"></div>
+                                <select id="fileSelect" class="form-select file-select-native" aria-hidden="true" tabindex="-1">
+                                    <option value="">请先选择仓库</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mode-section is-hidden" id="modeSection">
+                    <div class="mode-tabs">
+                        <button id="easyModeBtn" class="mode-tab active">
+                            <i class="fas fa-smile"></i>
+                            简易模式
+                        </button>
+                        <button id="advancedModeBtn" class="mode-tab">
+                            <i class="fas fa-code"></i>
+                            高级模式
+                        </button>
+                        <button id="networkModeBtn" class="mode-tab">
+                            <i class="fas fa-network-wired"></i>
+                            网络管理
+                        </button>
+                        <button type="button" id="createLocalYmlBtn" class="mode-tab is-hidden">
+                            <i class="fas fa-file-circle-plus"></i>
+                            新建 Compose 文件
+                        </button>
+                    </div>
+                </div>
+
+                <div class="params-section is-hidden" id="paramsSection">
+                    <div class="section-header">
+                        <h2>配置参数提取</h2>
+                    </div>
+                    <div id="paramsTableContainer" class="params-container">
+                        <p class="empty-hint">选择一个YML文件查看配置参数</p>
+                    </div>
+                    <div class="params-actions">
+                        <button id="saveEasyBtn" class="btn btn-primary deploy-save-btn" disabled>
+                            <i class="fas fa-save"></i>
+                            保存修改
+                        </button>
+                        <button id="deployEasyBtn" class="btn btn-success deploy-deploy-btn" disabled>
+                            <i class="fab fa-docker"></i>
+                            部署容器
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-section is-hidden" id="editorSection">
+                    <div class="section-header">
+                        <h2>配置内容</h2>
+                    </div>
+                    <div class="editor-container">
+                        <textarea id="ymlEditor" class="yml-editor" placeholder="选择一个YML文件查看内容..."></textarea>
+                        <div class="editor-info">
+                            <span id="fileName">未选择文件</span>
+                            <label id="localFileNameField" class="local-file-name-field is-hidden" for="localFileName">
+                                文件名
+                                <input id="localFileName" class="form-input" type="text" maxlength="255" autocomplete="off">
+                            </label>
+                            <span id="fileSize">0 KB</span>
+                            <span id="lastModified">未知</span>
+                        </div>
+                        <div class="editor-actions">
+                            <button id="saveAdvancedBtn" class="btn btn-primary deploy-save-btn" disabled>
+                                <i class="fas fa-save"></i>
+                                保存修改
+                            </button>
+                            <button id="deployAdvancedBtn" class="btn btn-success deploy-deploy-btn" disabled>
+                                <i class="fas fa-rocket"></i>
+                                部署应用
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="network-section is-hidden" id="networkSection">
+                    <div class="section-header">
+                        <h2>创建自定义网络</h2>
+                    </div>
+                    <div class="network-create-card">
+                        <div class="network-create-row">
+                            <div class="network-input-group">
+                                <label for="networkName">网络名称</label>
+                                <input type="text" id="networkName" class="form-input" placeholder="例如 my-bridge-net（字母数字开头，支持_-.）">
+                            </div>
+                            <div class="network-input-group" style="max-width: 220px;">
+                                <label for="networkDriver">驱动类型</label>
+                                <select id="networkDriver" class="form-select">
+                                    <option value="bridge" selected>bridge（最常用）</option>
+                                    <option value="host">host</option>
+                                    <option value="none">none</option>
+                                    <option value="overlay">overlay</option>
+                                    <option value="ipvlan">ipvlan</option>
+                                    <option value="macvlan">macvlan</option>
+                                </select>
+                            </div>
+                            <div class="network-input-group" style="max-width: 180px; align-self: flex-end;">
+                                <button id="createNetworkBtn" class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-plus-circle"></i>
+                                    创建网络
+                                </button>
+                            </div>
+                        </div>
+                        <div id="networkMessage" class="network-message" style="display: none;"></div>
+                    </div>
+
+                    <div class="section-header" style="margin-top: 24px;">
+                        <h2>已有网络</h2>
+                        <button id="refreshNetworksBtn" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+                    <div class="network-list-container">
+                        <table class="network-table" id="networkTable" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">网络名称</th>
+                                    <th style="width: 25%;">驱动</th>
+                                    <th style="width: 25%;">作用域</th>
+                                </tr>
+                            </thead>
+                            <tbody id="networkTableBody">
+                                <tr>
+                                    <td colspan="3" class="empty-cell">加载中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <section class="deploy-queue-panel is-hidden" id="deployQueuePanel">
+                    <div class="deploy-queue-header">
+                        <span><i class="fas fa-list-ol"></i> 部署队列</span>
+                        <span id="deployQueueSummary">队列为空</span>
+                    </div>
+                    <div class="deploy-queue-items" id="deployQueueItems"></div>
+                </section>
+
+                <div class="deploy-output" id="outputSection" style="display: none;">
+                    <div class="deploy-progress-panel" id="deployProgressPanel" style="display:none;">
+                        <div class="progress-summary">
+                            <div class="progress-summary-row">
+                                <span class="label">总耗时</span>
+                                <span class="value" id="totalElapsed">0.0s</span>
+                            </div>
+                            <div class="progress-summary-row">
+                                <span class="label">状态</span>
+                                <span class="value" id="deployStatus">准备中</span>
+                            </div>
+                        </div>
+                        <div class="stage-progress-item" data-stage="pull">
+                            <div class="stage-header">
+                                <i class="fas fa-download stage-icon pull"></i>
+                                <span class="stage-name">拉取镜像</span>
+                                <span class="stage-time" id="pullStageTime">—</span>
+                                <span class="stage-percent" id="pullStagePct">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="pullBar"></div>
+                            </div>
+                            <div class="stage-detail" id="pullStageDetail">等待开始</div>
+                        </div>
+                        <div class="stage-progress-item" data-stage="up">
+                            <div class="stage-header">
+                                <i class="fas fa-rocket stage-icon up"></i>
+                                <span class="stage-name">启动容器</span>
+                                <span class="stage-time" id="upStageTime">—</span>
+                                <span class="stage-percent" id="upStagePct">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" id="upBar"></div>
+                            </div>
+                            <div class="stage-detail" id="upStageDetail">等待开始</div>
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <h2>部署日志</h2>
+                        <button id="clearLogBtn" class="btn btn-secondary">
+                            <i class="fas fa-trash"></i>
+                            清空日志
+                        </button>
+                    </div>
+                    <div id="logContainer" class="log-container">
+                        <div class="log-item info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>准备就绪，请选择YML文件进行部署</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/src/components/common/page-common.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="/src/pages/deploy/deploy-yaml.js"></script>
+    <script src="/src/pages/deploy/deploy-network.js"></script>
+    <script src="/src/pages/deploy/deploy-progress.js"></script>
+    <script src="/src/pages/deploy/deploy.js"></script>
+</body>
+</html>

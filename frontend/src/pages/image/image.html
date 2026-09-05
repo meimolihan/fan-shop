@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双栈商店 - 镜像管理</title>
+    <link rel="icon" href="/src/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/src/components/sidebar/sidebar.css">
+    <link rel="stylesheet" href="./image.css">
+    <style>
+        .pull-log-container {
+            max-height: 240px;
+            overflow-y: auto;
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 6px;
+        }
+        .pull-log-item {
+            padding: 2px 0;
+            word-break: break-all;
+            white-space: pre-wrap;
+            display: flex;
+            gap: 8px;
+        }
+        .pull-log-item .pull-log-time {
+            color: #64748b;
+            font-size: 11px;
+            opacity: 0.85;
+            min-width: 64px;
+            flex-shrink: 0;
+        }
+        .pull-log-item .pull-log-msg { flex: 1; }
+        .pull-log-item.info { color: #cbd5e1; }
+        .pull-log-item.success { color: #34d399; }
+        .pull-log-item.error { color: #f87171; }
+
+        .pull-progress-panel {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 6px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .pull-progress-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .pull-progress-info { display: flex; gap: 8px; align-items: center; color: #cbd5e1; flex-wrap: wrap; word-break: break-all; }
+        .pull-progress-icon { color: #60a5fa; }
+        .pull-progress-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; word-break: break-all; }
+        .pull-progress-meta .sep { color: #475569; }
+        .pull-progress-meta #pullProgressPct { color: #f8fafc; font-weight: 600; font-family: Consolas, monospace; }
+        .pull-progress-meta #pullProgressTime { color: #94a3b8; font-family: Consolas, monospace; font-size: 12px; }
+        .pull-progress-bar {
+            width: 100%;
+            height: 8px;
+            border-radius: 6px;
+            background: rgba(148,163,184,0.15);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .pull-progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #38bdf8 0%, #818cf8 100%);
+            transition: width 0.3s ease;
+            min-width: 0;
+        }
+        .pull-progress-detail {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #94a3b8;
+            font-family: Consolas, Monaco, monospace;
+            min-height: 1em;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" id="appContainer">
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>镜像管理</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <img src="/src/images/logo.png" alt="用户头像">
+                        </div>
+                        <span class="username" id="currentUsername">加载中...</span>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <section class="image-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon local"><i class="fab fa-docker"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="imageCount">0</div>
+                            <div class="stat-label">本地镜像</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon storage"><i class="fas fa-hdd"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalSize">0 B</div>
+                            <div class="stat-label">镜像总大小</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon running"><i class="fas fa-play"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="runningImageCount">0</div>
+                            <div class="stat-label">运行镜像</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon inactive"><i class="fas fa-pause"></i></div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="inactiveImageCount">0</div>
+                            <div class="stat-label">未运行镜像</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="image-actions-card">
+                    <div class="image-action-bar">
+                        <button id="pullImageBtn" class="add-btn">
+                            <i class="fas fa-download"></i>
+                            <span>拉取镜像</span>
+                        </button>
+                        <button id="searchDockerHubBtn" class="add-btn">
+                            <i class="fab fa-docker"></i>
+                            <span>DockerHub</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="image-list">
+                    <div class="search-bar">
+                        <div class="filter-group">
+                            <label for="statusFilter">状态筛选:</label>
+                            <select id="statusFilter">
+                                <option value="all">全部</option>
+                                <option value="running">运行中</option>
+                                <option value="inactive">未运行</option>
+                            </select>
+                        </div>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="搜索镜像...">
+                        </div>
+                    </div>
+                    <div class="image-grid" id="imageGrid">
+                        <div class="empty-state">
+                            <i class="fas fa-image"></i>
+                            <p>暂无镜像，点击右上角拉取镜像</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="image-import-section">
+                    <div class="image-import-content">
+                        <div class="image-import-upload" id="imageImportUpload" onclick="document.getElementById('imageArchiveInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>点击或拖拽上传 .tar 镜像文件</p>
+                            <input id="imageArchiveInput" type="file" accept=".tar,application/x-tar">
+                        </div>
+                        <div class="image-import-info" id="imageImportInfo" style="display: none;">
+                            <div class="info-row"><span class="info-label">文件名</span><span class="info-value" id="imageArchiveName">-</span></div>
+                            <div class="info-row"><span class="info-label">文件大小</span><span class="info-value" id="imageArchiveSize">-</span></div>
+                        </div>
+                        <button class="image-import-submit" id="imageImportSubmit" type="button" disabled>
+                            <i class="fas fa-file-import"></i> 开始导入
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <div id="pullImageModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>拉取镜像</h2>
+                    <button class="modal-close" onclick="closeModal('pullImageModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="pullImageForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="imageName">镜像名称</label>
+                        <input type="text" id="imageName" placeholder="例如：nginx:latest 或 library/nginx:latest">
+                    </div>
+                    <div class="form-group">
+                        <label for="tag">标签 <span class="optional">(可选，默认为latest)</span></label>
+                        <input type="text" id="tag" placeholder="latest" value="latest">
+                    </div>
+                    <div class="form-group" id="pullProgressGroup" style="display:none;">
+                        <label>拉取进度</label>
+                        <div class="pull-progress-panel">
+                            <div class="pull-progress-head">
+                                <div class="pull-progress-info">
+                                    <i class="fas fa-download pull-progress-icon"></i>
+                                    <span>下载中</span>
+                                </div>
+                                <div class="pull-progress-meta">
+                                    <span id="pullProgressPct">0%</span>
+                                    <span class="sep">·</span>
+                                    <span id="pullProgressTime">用时 0.0s</span>
+                                </div>
+                            </div>
+                            <div class="pull-progress-bar">
+                                <div class="pull-progress-bar-fill" id="pullProgressBar"></div>
+                            </div>
+                            <div class="pull-progress-detail" id="pullProgressDetail">准备中...</div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="pullLogGroup" style="display:none;">
+                        <label>拉取日志</label>
+                        <div id="pullLogContainer" class="pull-log-container"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeModal('pullImageModal')">取消</button>
+                        <button type="submit" class="btn-submit">拉取</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div id="dockerHubModal" class="modal-overlay">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>从 DockerHub 搜索镜像</h2>
+                    <button class="modal-close" onclick="closeModal('dockerHubModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-form">
+                    <div class="search-box-container">
+                        <div class="search-box small">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="dockerHubSearch" placeholder="搜索镜像...">
+                        </div>
+                        <button id="searchBtn" class="btn-search">搜索</button>
+                    </div>
+                    <div class="search-results" id="searchResults">
+                        <div class="empty-search">
+                            <i class="fab fa-docker"></i>
+                            <p>输入关键词搜索 DockerHub</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/src/components/common/page-common.js"></script>
+    <script src="./image.js"></script>
+</body>
+</html>
