@@ -111,5 +111,12 @@
         "description": "开源轻量站点监控工具，检测网站、服务在线状态，异常时推送告警通知。",
         "tags": ["监控", "告警"],
         "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_uptime-kuma.html"
+    },
+    "fan-video": {
+        "title": "Fan-Video",
+        "subtitle": "个人媒体库",
+        "description": "本地视频媒体服务器（个人影视库）。",
+        "tags": ["媒体", "影音"],
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/fan-video.html"
     }
 }
