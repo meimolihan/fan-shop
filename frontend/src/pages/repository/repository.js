@@ -182,6 +182,11 @@ async function loadRepos() {
                             onclick="setCurrentRepo(this.closest('.repo-card').dataset.name, this)">
                         <i class="fas fa-star ${repo.is_current ? 'fa-solid' : 'fa-regular'}"></i>
                     </button>` : ''}
+                    <button type="button" class="action-btn clear-local-btn ${repo.status === 'syncing' ? 'disabled' : ''}"
+                            title="${repo.status === 'syncing' ? '同步中，暂不能删除本地文件' : '删除本地文件'}"
+                            onclick="deleteLocalFiles(this)" ${repo.status === 'syncing' ? 'disabled' : ''}>
+                        <i class="fas fa-folder-minus" aria-hidden="true"></i>
+                    </button>
                     <button type="button" class="action-btn delete-btn" aria-label="删除仓库"
                             title="${repo.status === 'syncing' ? '同步中，暂不能删除' : '删除仓库'}"
                             onclick="deleteRepo(this)" ${repo.status === 'syncing' ? 'disabled' : ''}>
@@ -244,6 +249,88 @@ async function deleteRepo(btn) {
             });
         });
     }
+}
+
+const clearingRepos = new Set();
+
+async function deleteLocalFiles(btn) {
+    const card = btn.closest('.repo-card');
+    const repoName = card.dataset.name;
+    if (btn.disabled || clearingRepos.has(repoName)) return;
+    if (card.dataset.status === 'syncing') {
+        showMessage('仓库正在同步，请完成后再操作', 'error');
+        return;
+    }
+    const isScript = card.querySelector('.repo-type-badge')?.textContent === 'Scripts';
+    const contentLabel = isScript ? '已同步的脚本文件' : '已同步的本地文件';
+    if (!confirm(`确定要删除仓库“${repoName}”的${contentLabel}吗？\n将删除本机已同步的内容（Git 仓库不变，已部署的容器不受影响），删除后需重新同步才能恢复。`)) return;
+    showDeleteLocalConfirmModal(repoName, isScript, async () => {
+        clearingRepos.add(repoName);
+        const buttons = [...card.querySelectorAll('.action-btn')];
+        const disabledStates = buttons.map(button => button.disabled);
+        buttons.forEach(button => { button.disabled = true; });
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>';
+        btn.title = '正在删除本地文件';
+        try {
+            const response = await apiFetch(`${API_BASE_URL}/repos/${encodeURIComponent(repoName)}/local-files`, { method: 'DELETE' });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                showMessage(result.detail || result.message || '删除失败，请重试', 'error');
+                return;
+            }
+            showMessage(result.message || '本地文件已删除', 'success');
+            await loadRepos();
+        } catch (error) {
+            showMessage('删除请求失败，请刷新列表确认状态后重试', 'error');
+        } finally {
+            clearingRepos.delete(repoName);
+            buttons.forEach((button, index) => { button.disabled = disabledStates[index]; });
+            btn.innerHTML = '<i class="fas fa-folder-minus" aria-hidden="true"></i>';
+            btn.title = '删除本地文件';
+        }
+    });
+}
+
+function showDeleteLocalConfirmModal(repoName, isScript, onConfirm) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay active';
+    modal.id = 'clearLocalModal';
+    const contentLabel = isScript ? '脚本文件' : '本地文件';
+    modal.innerHTML = `
+        <div class="modal-content clear-local-modal">
+            <div class="modal-header">
+                <h2>二次确认 · 删除已同步${contentLabel}</h2>
+                <button class="modal-close" onclick="document.getElementById('clearLocalModal').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>即将删除仓库 <strong>“${escapeRepoText(repoName)}”</strong> 的全部已同步${contentLabel}，此操作<b class="danger-text">不可撤销</b>，删除后须重新「同步」才能恢复。</p>
+                <p class="clear-local-hint">请输入仓库名称以确认删除：</p>
+                <input id="clearLocalInput" class="clear-local-input" type="text"
+                       placeholder="${escapeRepoText(repoName)}" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('clearLocalModal').remove()">取消</button>
+                <button type="button" class="btn-danger-repo" id="clearLocalConfirm" disabled>确认删除</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    const input = modal.querySelector('#clearLocalInput');
+    const confirmBtn = modal.querySelector('#clearLocalConfirm');
+    input.addEventListener('input', () => {
+        confirmBtn.disabled = input.value.trim() !== repoName;
+    });
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !confirmBtn.disabled) confirmBtn.click();
+    });
+    confirmBtn.addEventListener('click', () => {
+        if (confirmBtn.disabled) return;
+        modal.remove();
+        onConfirm();
+    });
+    setTimeout(() => input.focus(), 50);
 }
 
 async function setCurrentRepo(repoName, btn) {

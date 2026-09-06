@@ -20,6 +20,7 @@ from .services import (
     add_repo,
     get_repo,
     delete_repo,
+    delete_repo_local_files,
     sync_repo,
     get_repo_files,
     get_yml_content,
@@ -485,6 +486,16 @@ async def remove_repo(repo_name: str):
     if deleted:
         return {"success": True, "message": "仓库已删除"}
     raise HTTPException(status_code=404, detail="仓库不存在")
+
+
+@router.delete("/repos/{repo_name}/local-files")
+async def remove_repo_local_files(repo_name: str):
+    try:
+        return delete_repo_local_files(repo_name)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    except OSError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 @router.post("/deploy")
 async def deploy_application(request: DeployRequest):

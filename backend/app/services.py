@@ -1579,6 +1579,67 @@ def delete_repo(repo_name: str) -> bool:
     log_service.warning(f"删除仓库失败: {repo_name} - 仓库不存在", 'system')
     return False
 
+
+def delete_repo_local_files(repo_name: str) -> Dict:
+    """删除仓库在宿主机上已同步的本地文件。
+
+    Compose 仓库删除 REPOS_DIR 下的导出目录，并清理宿主机镜像目录中对应应用；
+    脚本仓库删除同步状态记录中列出的脚本文件。
+    """
+    _ensure_repos_loaded()
+    repo = None
+    for item in repos_db:
+        if item.name == repo_name:
+            repo = item
+            break
+    if repo is None:
+        raise ValueError('仓库不存在')
+    if repo.status == 'syncing':
+        raise ValueError('仓库正在同步，请完成后再删除本地文件')
+
+    removed_apps = 0
+    removed_files = 0
+    removed_host_dirs = 0
+
+    if repo.repo_type == "script":
+        state_key = _script_repo_state_key(repo.url, repo.branch, repo.local_path)
+        for relative_path in _load_script_repos_state().get(state_key, []):
+            target = (SCRIPTS_DIR / relative_path).resolve()
+            try:
+                if SCRIPTS_DIR in target.parents and target.is_file():
+                    target.unlink()
+                    removed_files += 1
+            except OSError as exc:
+                print(f"删除脚本文件失败: {exc}")
+    else:
+        repo_dir = _repo_storage_root(repo.repo_type) / repo.repo_dir_name
+        app_names = []
+        if repo_dir.exists():
+            app_names = sorted(child.name for child in repo_dir.glob("*"))
+            shutil.rmtree(repo_dir, ignore_errors=True)
+        removed_files = len(app_names)
+        removed_apps = len(app_names)
+        if _mirror_targets_host(repo.local_path):
+            host_root = HOST_MOUNT / FNOS_DOCKER_ROOT.lstrip("/")
+            if host_root.exists():
+                for name in app_names:
+                    target = host_root / name
+                    try:
+                        if target.exists():
+                            shutil.rmtree(target, ignore_errors=True)
+                            removed_host_dirs += 1
+                    except OSError as exc:
+                        print(f"删除宿主机镜像目录失败: {exc}")
+
+    if removed_files == 0:
+        message = "本地没有已同步的文件可删除"
+    else:
+        detail = f"已删除 {removed_files} 个"
+        detail += "脚本文件" if repo.repo_type == "script" else f"应用目录与仓库内容（含 {removed_host_dirs} 个宿主机镜像目录）"
+        message = detail
+    log_service.success(f"删除仓库本地文件: {repo_name} - {message}", 'repo')
+    return {"success": True, "message": message, "removed_files": removed_files}
+
 def deploy_yml(repo_name: str, file_path: str) -> Generator[dict, None, None]:
     """流式部署 YML，逐条 yield 事件 dict。
 
