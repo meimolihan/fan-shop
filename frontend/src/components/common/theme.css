@@ -361,9 +361,100 @@ html[data-theme="dark"] .login-tip {
 }
 
 /* ---- 暗色下心跳动画的 AI 悬浮窗一并深色化 ---- */
-html[data-theme="dark"] .ai-widget,
-html[data-theme="dark"] .ai-chat-panel {
+html[data-theme="dark"] .ai-floating-panel {
     background: #151f33;
-    border-color: #2a3752;
+    border-color: #334155;
     color: #e2e8f0;
+}
+
+html[data-theme="dark"] .ai-floating-header {
+    border-color: #2a3752;
+}
+
+html[data-theme="dark"] .ai-floating-log {
+    background: #0f172a;
+}
+
+html[data-theme="dark"] .ai-floating-icon-button {
+    background: #1e293b;
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .ai-floating-icon-button:hover:not(:disabled) {
+    background: #2b3a55;
+    color: #a5b4fc;
+}
+
+html[data-theme="dark"] .ai-floating-message {
+    border-color: #2a3752;
+    background: #1a2440;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .ai-floating-message.user {
+    border-color: #4c4698;
+    background: #2a2a5e;
+}
+
+html[data-theme="dark"] .ai-floating-empty {
+    color: #64748b;
+}
+
+html[data-theme="dark"] .ai-floating-composer {
+    border-color: #334155;
+    background: #0f172a;
+}
+
+html[data-theme="dark"] .ai-floating-composer textarea {
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .ai-floating-status {
+    background: #1a2740;
+    color: #fca5a5;
+}
+
+html[data-theme="dark"] .ai-floating-panel.busy {
+    border-color: #3b82f6;
+}
+
+html[data-theme="dark"] .ai-floating-panel.error {
+    border-color: #ef4444;
+}
+
+html[data-theme="dark"] .ai-floating-copy:hover {
+    background: rgba(148, 163, 184, 0.15);
+    color: #c7d2fe;
+}
+
+html[data-theme="dark"] .ai-floating-message .message-thinking,
+html[data-theme="dark"] .ai-floating-message .message-code {
+    border-color: #2a3752;
+    background: #0f172a;
+}
+
+html[data-theme="dark"] .ai-floating-message .message-code-header {
+    border-color: #2a3752;
+}
+
+html[data-theme="dark"] .ai-floating-message .message-code-header button {
+    border-color: #334155;
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+/* ============================================================
+   左右下角悬浮按钮统一交互风格（launcher 的 hover 已由
+   ai-widget.css 统一处理，这里仅补暗色阴影）
+   ============================================================ */
+html[data-theme="dark"] .ai-floating-launcher {
+    box-shadow: 0 10px 28px rgba(79, 70, 229, 0.5);
+}
+
+/* ---- 移动端：悬浮按钮不随左右滑动/横向平移 ---- */
+@media (max-width: 768px) {
+    html,
+    body {
+        overflow-x: hidden;
+    }
 }
