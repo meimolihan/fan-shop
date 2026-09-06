@@ -672,3 +672,15 @@ body {
         justify-content: flex-end;
     }
 }
+
+@media (max-width: 768px) {
+    .action-btn {
+        width: 44px;
+        height: 44px;
+    }
+
+    .logs-modal {
+        width: 96%;
+        max-width: none;
+    }
+}

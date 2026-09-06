@@ -865,6 +865,12 @@ div.repo-status.error .status-dot {
     .search-bar {
         flex-direction: column;
     }
+
+    .repo-card .action-btn {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+    }
 }
 
 /* 仓库页与容器、备份、镜像页共用的统计卡片与横向列表布局 */

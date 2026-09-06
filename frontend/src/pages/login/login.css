@@ -334,6 +334,10 @@ body {
 }
 
 @media (max-width: 480px) {
+    body {
+        overflow-y: auto;
+    }
+
     .login-container {
         padding: 15px;
     }

@@ -264,3 +264,112 @@
     justify-content: center;
     gap: 0;
 }
+
+/* ===== 移动端抽屉（≤768px，全站统一） ===== */
+.sidebar-mask,
+.mobile-nav-toggle {
+    display: none;
+}
+
+@keyframes sidebarMaskIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes sidebarMaskOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-toggle {
+        display: none;
+    }
+
+    /* 抽屉内始终以展开态显示，不受桌面折叠状态影响 */
+    .sidebar.collapsed .logo {
+        gap: 12px;
+    }
+    .sidebar.collapsed .logo span,
+    .sidebar.collapsed .sidebar-nav a span,
+    .sidebar.collapsed .logout-btn span {
+        opacity: 1;
+        width: auto;
+        padding: 0;
+        margin: 0;
+    }
+    .sidebar.collapsed .sidebar-version {
+        display: block;
+    }
+    .sidebar.collapsed .sidebar-nav a {
+        justify-content: flex-start;
+        padding: 14px 16px;
+        gap: 14px;
+    }
+    .sidebar.collapsed .sidebar-nav a:hover {
+        transform: translateX(4px);
+    }
+    .sidebar.collapsed .logout-btn {
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
+    .mobile-nav-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        left: 12px;
+        top: 12px;
+        width: 42px;
+        height: 42px;
+        border: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 102;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
+    }
+
+    .sidebar-mask {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(4, 10, 26, 0.55);
+        z-index: 99;
+        opacity: 0;
+        visibility: hidden;
+        animation: sidebarMaskOut 0.25s ease forwards;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .sidebar-mask.visible {
+        opacity: 1;
+        visibility: visible;
+        animation: sidebarMaskIn 0.25s ease forwards;
+    }
+
+    body.sidebar-open {
+        overflow: hidden;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+    }
+
+    .sidebar-open .main-content {
+        transition: margin-left 0.3s ease;
+    }
+}

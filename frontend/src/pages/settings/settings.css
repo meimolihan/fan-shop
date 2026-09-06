@@ -1028,10 +1028,6 @@ body {
         transition: transform 0.3s ease;
     }
     
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    
     .main-content {
         margin-left: 0;
     }
@@ -1048,7 +1044,9 @@ body {
         padding: 15px 20px;
     }
     
+    /* 多列用户表整表横向滚动，避免挤压 */
     .user-table {
+        min-width: 780px;
         font-size: 12px;
     }
     
@@ -1058,9 +1056,52 @@ body {
     }
     
     .action-btn {
-        padding: 4px 8px;
-        font-size: 11px;
+        padding: 8px 10px;
+        font-size: 12px;
         margin-right: 4px;
+        min-height: 34px;
+    }
+
+    /* 版本卡片窄屏纵排 */
+    .version-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        padding: 20px;
+    }
+    .version-card .version-info {
+        align-items: flex-start;
+    }
+    .version-card .version-actions {
+        margin-left: 0;
+        justify-content: flex-start;
+    }
+    .version-card .version-actions .check-update-btn,
+    .version-card .version-actions .github-btn,
+    .version-card .version-actions .clear-cache-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Docker 加速源：条目/添加栏换行 */
+    .mirror-item {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .mirror-url {
+        min-width: 0;
+        word-break: break-all;
+    }
+    .mirror-add-form {
+        flex-wrap: wrap;
+    }
+    .mirror-add-form input {
+        flex: 1 1 100%;
+    }
+    .add-mirror-btn {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-height: 44px;
     }
 }
 

@@ -937,3 +937,10 @@ body {
     background-color: #9ca3af;
     cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+    .action-btn {
+        width: 44px;
+        height: 44px;
+    }
+}

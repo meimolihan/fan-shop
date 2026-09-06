@@ -16,7 +16,44 @@ export function initSidebar(currentPage) {
         }
     });
     
+    // 移动端抽屉：汉堡按钮 + 遮罩
+    const navToggle = document.createElement('button');
+    navToggle.className = 'mobile-nav-toggle';
+    navToggle.setAttribute('aria-label', '打开导航菜单');
+    navToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    const mask = document.createElement('div');
+    mask.className = 'sidebar-mask';
+    document.body.appendChild(mask);
+    document.body.appendChild(navToggle);
+
+    function openNav() {
+        sidebar.classList.add('open');
+        document.body.classList.add('sidebar-open');
+        navToggle.style.display = 'none';
+        mask.classList.add('visible');
+    }
+
+    function closeNav() {
+        sidebar.classList.remove('open');
+        document.body.classList.remove('sidebar-open');
+        navToggle.style.display = '';
+        mask.classList.remove('visible');
+    }
+
+    navToggle.addEventListener('click', openNav);
+    mask.addEventListener('click', closeNav);
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && sidebar.classList.contains('open')) closeNav();
+    });
+    sidebar.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+        link.addEventListener('click', closeNav);
+    });
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && sidebar.classList.contains('open')) closeNav();
+    });
+    
     logoutBtn.addEventListener('click', async function() {
+        closeNav();
         if (confirm('确定要退出登录吗？')) {
             try {
                 await fetch('/api/logout', { method: 'POST' });

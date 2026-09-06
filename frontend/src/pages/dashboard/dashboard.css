@@ -817,3 +817,12 @@ body {
         font-size: 18px;
     }
 }
+
+@media (max-width: 480px) {
+    .action-grid {
+        grid-template-columns: 1fr;
+    }
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+}

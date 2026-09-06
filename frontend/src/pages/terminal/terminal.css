@@ -295,4 +295,11 @@ body {
     .toolbar-btn span {
         display: none;
     }
+
+    .toolbar-btn {
+        min-width: 42px;
+        min-height: 42px;
+        justify-content: center;
+        padding: 8px 12px;
+    }
 }

@@ -162,3 +162,16 @@ body {
 .register-link a:hover {
     text-decoration: underline;
 }
+@media (max-width: 480px) {
+    .login-container {
+        padding: 15px;
+    }
+
+    .login-box {
+        padding: 28px 20px;
+    }
+
+    .logo-section h2 {
+        font-size: 24px;
+    }
+}

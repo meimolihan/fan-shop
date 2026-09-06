@@ -61,12 +61,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 .service-summary .chat-status.error { color: #b42318; }
 [hidden] { display: none !important; }
 @media (max-width: 768px) {
-    .ai-container .sidebar { width: 70px; }
     .ai-container .sidebar .sidebar-toggle { display: none; }
-    .ai-container .sidebar span { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; padding: 0; margin: -1px; white-space: nowrap; }
-    .ai-container .sidebar .sidebar-header { padding: 20px 10px; }
-    .ai-container .sidebar .sidebar-nav a, .ai-container .sidebar .logout-btn { justify-content: center; padding: 14px 8px; gap: 0; }
-    .ai-container .main-content { margin-left: 70px; }
     .ai-container .top-header { padding: 18px 16px; flex-wrap: wrap; }
     .chat-card { margin: 12px; width: calc(100% - 24px); }
     .conversation-actions-card { margin: 0 12px 12px; padding: 14px; }
