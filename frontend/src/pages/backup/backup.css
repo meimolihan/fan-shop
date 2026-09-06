@@ -845,6 +845,29 @@ body {
         width: 100%;
         justify-content: flex-end;
     }
+
+    /* 容器备份行：状态/操作换行，避免把卡片挤出屏幕 */
+    .containers-list .container-card {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .containers-list .container-info {
+        min-width: 0;
+    }
+    .containers-list .container-status {
+        width: auto;
+        margin-right: 0;
+    }
+    .containers-list .container-actions {
+        margin-left: auto;
+    }
+    /* 容器镜像名（长字符串）窄屏下允许换行，避免把详情挤出屏幕 */
+    .containers-list .container-details p {
+        flex-wrap: wrap;
+    }
+    .containers-list .container-details p span {
+        overflow-wrap: anywhere;
+    }
 }
 
 .backups-grid .section-header {

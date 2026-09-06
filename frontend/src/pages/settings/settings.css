@@ -1103,6 +1103,20 @@ body {
         justify-content: center;
         min-height: 44px;
     }
+
+    /* 折叠面板标题行：允许换行，避免右侧按钮被挤出屏幕 */
+    .settings-collapsible .section-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .section-header h2 {
+        min-width: 0;
+    }
+    .section-actions,
+    .ai-config-actions {
+        flex-wrap: wrap;
+        margin-left: auto;
+    }
 }
 
 /* Docker 加速源样式 */

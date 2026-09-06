@@ -871,6 +871,12 @@ div.repo-status.error .status-dot {
         height: 44px;
         flex: 0 0 44px;
     }
+
+    /* 元信息（同步时间等）窄屏下换行，避免挤出卡片 */
+    .repo-card .repo-meta {
+        flex-wrap: wrap;
+        gap: 6px 12px;
+    }
 }
 
 /* 仓库页与容器、备份、镜像页共用的统计卡片与横向列表布局 */

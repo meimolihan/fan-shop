@@ -319,6 +319,18 @@ a {
 
     .main-content {
         margin-left: 0 !important;
+        /* flex 布局页面的主区默认 min-width:auto，
+           会被内部 min-content（如多列统计条/表格）撑爆导致整页横向裁切，
+           这里强制让主区收敛到视口宽度，超宽内容交由页面内部滚动/换行处理 */
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* 主区内部同样存在 flex 级联 min-content 问题，一并放行收缩 */
+    .content-area,
+    .logs-container,
+    .chat-container {
+        min-width: 0;
     }
 
     /* 为左上角汉堡按钮预留空间，避免遮挡页面标题（不被各页后加载的 padding 简写覆盖） */

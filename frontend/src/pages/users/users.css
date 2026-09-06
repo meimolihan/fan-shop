@@ -51,5 +51,10 @@ body { min-height: 100vh; background: #f0f2f5; color: #1e293b; font-family: 'Seg
     .content-area { padding: 16px; }
     .section-header { align-items: stretch; flex-direction: column; }
     .section-header .app-button { align-self: flex-start; }
+    /* 多列表格在窄屏下保持横向滚动而非挤压裁切 */
+    .user-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
     .user-table { min-width: 780px; }
 }
