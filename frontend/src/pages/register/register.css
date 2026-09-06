@@ -161,3 +161,10 @@ body {
         font-size: 24px;
     }
 }
+
+@media (max-width: 480px) {
+    .form-group input,
+    .password-field input {
+        font-size: 16px;
+    }
+}

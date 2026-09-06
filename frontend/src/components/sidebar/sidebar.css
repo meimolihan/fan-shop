@@ -17,34 +17,6 @@
     width: 70px;
 }
 
-.sidebar-toggle {
-    position: absolute;
-    right: -18px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: white;
-    border: 2px solid #e2e8f0;
-    color: #64748b;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 101;
-}
-
-.sidebar-toggle:hover {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-color: #667eea;
-    transform: translateY(-50%) scale(1.1);
-}
-
 .sidebar-header {
     padding: 24px 20px;
     display: flex;
@@ -266,6 +238,11 @@
 }
 
 /* ===== 移动端抽屉（≤768px，全站统一） ===== */
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
 .sidebar-mask,
 .mobile-nav-toggle {
     display: none;
@@ -292,38 +269,7 @@
         transform: translateX(0);
     }
 
-    .sidebar-toggle {
-        display: none;
-    }
-
-    /* 抽屉内始终以展开态显示，不受桌面折叠状态影响 */
-    .sidebar.collapsed .logo {
-        gap: 12px;
-    }
-    .sidebar.collapsed .logo span,
-    .sidebar.collapsed .sidebar-nav a span,
-    .sidebar.collapsed .logout-btn span {
-        opacity: 1;
-        width: auto;
-        padding: 0;
-        margin: 0;
-    }
-    .sidebar.collapsed .sidebar-version {
-        display: block;
-    }
-    .sidebar.collapsed .sidebar-nav a {
-        justify-content: flex-start;
-        padding: 14px 16px;
-        gap: 14px;
-    }
-    .sidebar.collapsed .sidebar-nav a:hover {
-        transform: translateX(4px);
-    }
-    .sidebar.collapsed .logout-btn {
-        justify-content: flex-start;
-        gap: 12px;
-    }
-
+    /* 抽屉内始终以展开态显示 */
     .mobile-nav-toggle {
         display: flex;
         align-items: center;

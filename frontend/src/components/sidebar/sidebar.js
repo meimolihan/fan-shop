@@ -1,20 +1,7 @@
 export function initSidebar(currentPage) {
-    const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.querySelector('.sidebar');
     const logoutBtn = document.getElementById('logoutBtn');
     const navItems = document.querySelectorAll('.sidebar-nav li');
-    
-    sidebarToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        const icon = sidebarToggle.querySelector('i');
-        if (sidebar.classList.contains('collapsed')) {
-            icon.classList.remove('fa-chevron-left');
-            icon.classList.add('fa-chevron-right');
-        } else {
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-        }
-    });
     
     // 移动端抽屉：汉堡按钮 + 遮罩
     const navToggle = document.createElement('button');
