@@ -122,7 +122,7 @@
     "fan-panel": {
         "title": "Fan-Panel",
         "subtitle": "导航管理面板",
-        "description": "Fan-Panel 是一款轻量级的服务器管理面板。",
+        "description": "Fan-Panel 是一款轻量级的服务器管理面板，Docker 容器 关闭、开启、重启等。",
         "tags": ["网络", "监控"],
         "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_fan-panel.html"
     },
