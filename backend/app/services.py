@@ -1225,12 +1225,23 @@ def get_all_repos() -> List[Dict]:
         for repo in repos_db
     ]
 
+def _repo_locally_synced(repo) -> bool:
+    """本机仓库内容是否已同步（导出目录存在；脚本仓库还需有同步状态记录）。"""
+    repo_dir = _repo_storage_root(repo.repo_type) / repo.repo_dir_name
+    if not repo_dir.exists():
+        return False
+    if repo.repo_type == "compose":
+        return True
+    state_key = _script_repo_state_key(repo.url, repo.branch, repo.local_path)
+    return state_key in _load_script_repos_state()
+
+
 def _effective_repo_status(repo, host_mirror_missing: bool) -> str:
     """计算仓库展示状态。
 
-    宿主机镜像目标仓库（默认 fnOS）若镜像目录缺失，视为未同步。
+    本机内容缺失视为未同步；宿主机镜像目标仓库（默认 fnOS）若镜像目录缺失，也视为未同步。
     """
-    if repo.status == "pending":
+    if repo.status == "pending" or not _repo_locally_synced(repo):
         return "pending"
     if repo.repo_type == "compose" and host_mirror_missing and _mirror_targets_host(repo.local_path):
         return "pending"
