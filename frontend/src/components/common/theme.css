@@ -7,7 +7,7 @@
 /* ---- 悬浮按钮 ---- */
 .theme-toggle {
     position: fixed;
-    bottom: 24px;
+    bottom: 29px;
     left: 24px;
     z-index: 200;
     cursor: pointer;
@@ -22,7 +22,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
         color 150ms cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -456,6 +455,13 @@ html[data-theme="dark"] .ai-floating-launcher {
     html,
     body {
         overflow-x: hidden;
+    }
+}
+
+/* 与右下角 AI 按钮保持水平中心对齐（56px vs 46px，差 10px / 2） */
+@media (max-width: 600px) {
+    .theme-toggle {
+        bottom: 21px;
     }
 }
 
