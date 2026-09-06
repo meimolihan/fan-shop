@@ -646,10 +646,8 @@ body {
         padding: 8px;
     }
 
-    .page-header {
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
+    .header-left h1 {
+        font-size: 18px;
     }
 
     /* 统计卡固定 2 列，末行奇数卡整行居中，避免歪斜/留空 */
