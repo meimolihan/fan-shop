@@ -1217,31 +1217,72 @@ body {
         grid-template-columns: 1fr;
     }
 
-    /* 统计卡自适应 2 列 */
+    /* 统计卡固定 2 列：4 张正好两行，等高对齐，定位居中不歪斜 */
     .image-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .image-stats .stat-card {
+        padding: 14px;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .image-stats .stat-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .image-stats .stat-info {
+        min-width: 0;
+    }
+
+    .image-stats .stat-value {
+        font-size: 19px;
+        line-height: 1.25;
+        word-break: break-all;
+    }
+
+    .image-stats .stat-label {
+        font-size: 12px;
+        margin-top: 2px;
+        white-space: nowrap;
     }
 
     .content-area {
-        padding: 15px 16px;
+        padding: 15px 12px;
     }
     
     .top-header {
-        padding: 15px 20px;
+        padding: 15px 16px;
     }
     
     .header-left h1 {
         font-size: 18px;
     }
-    
+
+    /* 操作按钮纵向堆叠全宽，触控友好 */
+    .image-action-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .image-action-bar .add-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
     .search-bar {
         flex-direction: column;
     }
-    
-    .image-stats {
-        flex-direction: column;
+
+    .search-bar .filter-group,
+    .search-bar .search-box {
+        width: 100%;
     }
 
     /* 镜像卡纵向堆叠：头部信息整行、状态徽标、操作按钮一行收尾，
@@ -1273,5 +1314,32 @@ body {
     .image-action-bar {
         justify-content: flex-start;
         flex-wrap: wrap;
+    }
+
+    /* 导入区移动端 */
+    .image-import-section {
+        padding: 14px;
+    }
+
+    .image-import-upload {
+        padding: 22px 12px;
+    }
+
+    .image-import-upload i {
+        font-size: 30px;
+    }
+
+    .image-import-submit {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: calc(100% - 32px);
+        margin: 48px auto;
+        max-height: calc(100vh - 96px);
+        padding: 18px;
     }
 }

@@ -820,9 +820,37 @@ body {
     /* 统计卡自适应 2 列 */
     .stats-bar {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 14px;
-        padding: 16px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .stats-bar .stat-item {
+        padding: 12px;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .stats-bar .stat-item .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .stats-bar .stat-item .stat-info {
+        min-width: 0;
+    }
+
+    .stats-bar .stat-item .stat-value {
+        font-size: 22px;
+        line-height: 1.25;
+    }
+
+    /* 奇数张统计卡：最后一张占整行并居中内容 */
+    .stats-bar .stat-item:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        justify-content: center;
     }
 
     /* 备份卡片区窄屏下收窄边距 */
