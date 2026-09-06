@@ -115,7 +115,7 @@
     "fan-video": {
         "title": "Fan-Video",
         "subtitle": "个人媒体库",
-        "description": "本地视频媒体服务器（个人影视库）。",
+        "description": "本地视频媒体服务器（个人影视库），本地海报刮削、精彩片段生成。",
         "tags": ["媒体", "影音"],
         "tutorial": "https://cmdbox.meimolihan.eu.org/c/fan-video.html"
     },
