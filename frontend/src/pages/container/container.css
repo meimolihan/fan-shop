@@ -699,12 +699,35 @@ body {
     }
 
     .container-card {
-        flex-direction: column;
+        flex-wrap: wrap;
         align-items: flex-start;
-        gap: 12px;
+        gap: 8px 10px;
+        padding: 12px 10px;
     }
 
-    /* 卡片区收窄 30px 边距，让容器卡更宽、更好触控 */
+    /* 信息列按内容自然宽度，不强行填满，给状态徽标留同排空间 */
+    .container-info {
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: none;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .container-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .container-status {
+        width: auto;
+        margin-right: 0;
+        justify-content: flex-start;
+    }
+
+    /* 卡片区贴边 12px，让容器卡更宽 */
     .containers-grid {
         margin: 0 4px 16px;
         border-radius: 14px;
@@ -712,15 +735,15 @@ body {
 
     .containers-list {
         padding: 10px;
+        gap: 10px;
     }
 
-    .container-card {
-        padding: 12px;
-    }
-
+    /* 按钮行独占底行、全宽右对齐 */
     .container-actions {
-        width: 100%;
+        flex: 1 1 100%;
         justify-content: flex-end;
+        padding-top: 2px;
+        border-top: 1px solid rgba(0,0,0,0.04);
     }
 }
 
