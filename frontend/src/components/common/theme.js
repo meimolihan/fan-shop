@@ -19,42 +19,54 @@
     }
 
     function applyTheme(theme) {
-        var el = document.documentElement;
-        el.removeAttribute("data-theme");
-        el.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme", theme);
     }
 
+    var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var transitioning = false;
+
     function toggleTheme() {
-        var current = resolveTheme(getPreferredTheme());
-        var next = current === "dark" ? "light" : "dark";
+        if (prefersReduced.matches || transitioning) return;
+
+        var next = resolveTheme(getPreferredTheme()) === "dark" ? "light" : "dark";
         localStorage.setItem(STORAGE_KEY, next);
 
         if (document.startViewTransition) {
-            var transition = document.startViewTransition(function () {
-                applyTheme(next);
-            });
-            if (transition && transition.ready) {
-                transition.ready.then(function () {
-                    var centerX = 24;
-                    var centerY = window.innerHeight - 24;
-                    var radius = Math.hypot(
-                        Math.max(centerX, window.innerWidth - centerX),
-                        Math.max(centerY, window.innerHeight - centerY)
-                    );
-                    document.documentElement.animate(
-                        {
-                            clipPath: [
-                                "circle(0% at " + centerX + "px " + centerY + "px)",
-                                "circle(" + radius + "px at " + centerX + "px " + centerY + "px)",
-                            ],
-                        },
-                        {
-                            duration: 520,
-                            easing: "ease-in-out",
-                            pseudoElement: "::view-transition-new(root)",
-                        }
-                    );
+            transitioning = true;
+            try {
+                var transition = document.startViewTransition(function () {
+                    applyTheme(next);
                 });
+                if (transition && transition.ready) {
+                    transition.ready.then(function () {
+                        var x = 24, y = window.innerHeight - 24, d = 56;
+                        var centerX = x + d / 2;
+                        var centerY = y - d / 2;
+                        var radius = Math.hypot(
+                            Math.max(centerX, window.innerWidth - centerX),
+                            Math.max(centerY, window.innerHeight - centerY)
+                        );
+                        document.documentElement.animate(
+                            [
+                                { clipPath: "circle(0% at " + centerX + "px " + centerY + "px)" },
+                                { clipPath: "circle(" + radius + "px at " + centerX + "px " + centerY + "px)" },
+                            ],
+                            {
+                                duration: 650,
+                                easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+                                pseudoElement: "::view-transition-new(root)",
+                            }
+                        );
+                    }).catch(function () { /* 动画失败则保持直切 */ });
+                }
+                if (transition && transition.finished) {
+                    transition.finished.finally(function () {
+                        transitioning = false;
+                    });
+                }
+            } catch (error) {
+                transitioning = false;
+                applyTheme(next);
             }
         } else {
             var html = document.documentElement;
@@ -62,7 +74,7 @@
             applyTheme(next);
             window.setTimeout(function () {
                 html.classList.remove("theme-transition");
-            }, 380);
+            }, 420);
         }
     }
 
