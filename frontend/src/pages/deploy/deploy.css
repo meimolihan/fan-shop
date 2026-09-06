@@ -20,8 +20,8 @@ body {
 .params-section,
 .editor-section,
 .network-section {
-    width: 100%;
-    max-width: 100%;
+    width: auto;
+    max-width: none;
     box-sizing: border-box;
     /* 不设任何 overflow：卡片按内容自然高度展示，
        横向溢出由子元素 max-width + word-break 约束，
@@ -31,7 +31,7 @@ body {
 
 .mode-section {
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 16px;
     margin-bottom: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -92,9 +92,9 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-size: 14px;
@@ -277,17 +277,27 @@ body {
 
 .content-area {
     flex: 1;
-    padding: 25px 30px;
+    padding: 0 0 20px;
     /* 整页的纵向滚动条放在这里，所有卡片高度自然撑开，靠这个统一滚 */
     overflow-y: auto;
     overflow-x: visible;
     display: flex;
     flex-direction: column;
-    gap: 20px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     min-width: 0; /* flex 子项防止无限撑开主容器 */
+}
+
+/* 与容器/备份/仓库一致：由每个区块自带 30px 外边距 */
+.mode-section,
+.select-section,
+.params-section,
+.editor-section,
+.network-section,
+.deploy-queue-panel,
+.deploy-output {
+    margin: 0 30px 30px;
 }
 
 .section-header {
@@ -740,8 +750,8 @@ body {
 
 .deploy-save-btn,
 .deploy-deploy-btn {
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     box-shadow: none;
     font-weight: 500;
@@ -765,6 +775,24 @@ body {
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
+    }
+
+    .content-area {
+        padding: 15px 12px;
+    }
+
+    .mode-section,
+    .select-section,
+    .params-section,
+    .editor-section,
+    .network-section,
+    .deploy-queue-panel,
+    .deploy-output {
+        margin: 0 0 16px;
+    }
+
+    .header-left h1 {
+        font-size: 18px;
     }
     
     .select-row {
@@ -891,7 +919,7 @@ body {
     box-sizing: border-box;
     max-width: calc(100% - 14px - 82px); /* 图标14+gap10+time74 → 留给文字的剩余空间 */
 }
-@media (max-width: 720px) {
+@media (max-width: 480px) {
     .deploy-progress-panel { padding: 12px 12px; }
     .stage-header { font-size: 12px; }
     .stage-percent { font-size: 12px; }
@@ -903,7 +931,7 @@ body {
     box-sizing: border-box;
     overflow: visible;
     background: white;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 20px;
     margin-bottom: 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -1056,7 +1084,7 @@ body {
 .network-table .driver-tag.bridge { background: #dbeafe; color: #1e40af; }
 .network-table .driver-tag.overlay { background: #fae8ff; color: #86198f; }
 .network-table .driver-tag.none { background: #f1f5f9; color: #475569; }
-@media (max-width: 720px) {
+@media (max-width: 480px) {
     .network-section { padding: 14px; }
     .network-create-row { gap: 10px; flex-direction: column; }
     .network-input-group { max-width: 100% !important; }

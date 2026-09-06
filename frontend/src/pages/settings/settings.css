@@ -733,9 +733,9 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-size: 14px;
@@ -1037,11 +1037,15 @@ body {
     }
     
     .top-header {
-        padding: 15px 20px;
+        padding: 15px 12px;
     }
     
     .content-area {
-        padding: 15px 20px;
+        padding: 15px 12px;
+    }
+
+    .header-left h1 {
+        font-size: 18px;
     }
     
     /* 多列用户表整表横向滚动，避免挤压 */

@@ -62,7 +62,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
 [hidden] { display: none !important; }
 @media (max-width: 768px) {
     .ai-container .sidebar .sidebar-toggle { display: none; }
-    .ai-container .top-header { padding: 18px 16px; flex-wrap: wrap; }
+    .ai-container .top-header { padding: 15px 12px; flex-wrap: wrap; }
+    .ai-container .header-left h1 { font-size: 18px; }
     .chat-card { margin: 12px; width: calc(100% - 24px); }
     .conversation-actions-card { margin: 0 12px 12px; padding: 14px; }
     .conversation-history-card { margin: 0 12px 20px; }

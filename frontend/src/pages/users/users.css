@@ -47,8 +47,9 @@ body { min-height: 100vh; background: #f0f2f5; color: #1e293b; font-family: 'Seg
 .message-toast.info { background: #2563eb; }
 @media (max-width: 768px) {
     .main-content, .sidebar.collapsed ~ .main-content { margin-left: 0; }
-    .top-header { min-height: 76px; padding: 16px 20px; }
-    .content-area { padding: 16px; }
+    .top-header { min-height: 76px; padding: 16px 12px; }
+    .content-area { padding: 15px 12px; }
+    .header-left h1 { font-size: 18px; }
     .section-header { align-items: stretch; flex-direction: column; }
     .section-header .app-button { align-self: flex-start; }
     /* 多列表格在窄屏下保持横向滚动而非挤压裁切 */

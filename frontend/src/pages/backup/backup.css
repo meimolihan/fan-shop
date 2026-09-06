@@ -22,6 +22,7 @@ body {
     flex-direction: column;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 100vh;
+    min-width: 0;
 }
 
 .content-area {
@@ -100,9 +101,9 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 20px;
+    padding: 12px 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -110,12 +111,14 @@ body {
 }
 
 .btn-primary {
-    background-color: #6366f1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: #4f46e5;
+    filter: brightness(1.05);
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -815,6 +818,7 @@ body {
 @media (max-width: 768px) {
     .main-content {
         margin-left: 0;
+        padding: 8px;
     }
 
     /* 统计卡自适应 2 列 */
@@ -855,7 +859,7 @@ body {
 
     /* 备份卡片区窄屏下收窄边距 */
     .backups-grid {
-        margin: 16px;
+        margin: 0 4px 16px;
     }
 
     .action-grid {

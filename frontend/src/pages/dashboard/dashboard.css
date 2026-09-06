@@ -22,6 +22,7 @@ body {
     flex-direction: column;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     min-height: 100vh;
+    min-width: 0;
 }
 
 .content-area {
@@ -219,7 +220,7 @@ body {
 
 .action-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 }
 
@@ -658,11 +659,11 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 12px 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
@@ -805,10 +806,24 @@ body {
         margin-left: 0;
     }
     
-    /* 统计卡自适应改为 2 列（≤600px 时留 1 列），大幅减少纵向滚动 */
+    /* 统计卡固定 2 列（偶数张，两行等高）+ 页面分区移动侧距 12px */
     .stats-cards {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 14px;
+    }
+
+    .stats-cards .card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
+    .stats-section,
+    .quick-actions,
+    .host-info-section,
+    .docker-info-section,
+    .connectivity-section,
+    .recent-activity {
+        padding-left: 12px;
+        padding-right: 12px;
     }
     
     .card {
@@ -838,7 +853,7 @@ body {
 
 @media (max-width: 480px) {
     .stats-cards {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
     .card-icon {
