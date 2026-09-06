@@ -1,0 +1,11 @@
+services:
+   dufs-zh:
+      command: /data
+      container_name: dufs-zh
+      image: mobufan/dufs-zh:latest
+      network_mode: bridge
+      restart: always
+      ports:
+         - 5000:5000
+      volumes:
+         - /vol2/1000/file:/data
