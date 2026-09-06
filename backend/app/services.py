@@ -835,6 +835,14 @@ def _mirror_targets_host(local_path: str) -> bool:
         return False
 
 
+def _host_mirror_ready() -> bool:
+    """宿主机镜像目录是否已存在。"""
+    try:
+        return (HOST_MOUNT / FNOS_DOCKER_ROOT.lstrip("/")).exists()
+    except OSError:
+        return False
+
+
 def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: str = "compose", max_retries: int = 3) -> Dict:
     """Synchronize a repository while keeping its Git metadata out of mapped files."""
     repo_name = get_repo_name_from_url(repo_url)
@@ -1200,6 +1208,7 @@ def scan_repo_files(repo_dir: Path, local_path: str, repo_type: str, repo_url: s
 def get_all_repos() -> List[Dict]:
     _ensure_repos_loaded()
     current_repo = get_setting("current_repo", "")
+    target_host_mirror_missing = not _host_mirror_ready()
     return [
         {
             "name": repo.name,
@@ -1210,11 +1219,23 @@ def get_all_repos() -> List[Dict]:
             "file_count": len(repo.yml_files),
             "repo_type": repo.repo_type,
             "last_sync": repo.last_sync,
-            "status": repo.status,
+            "status": _effective_repo_status(repo, target_host_mirror_missing),
             "is_current": repo.name == current_repo
         }
         for repo in repos_db
     ]
+
+def _effective_repo_status(repo, host_mirror_missing: bool) -> str:
+    """计算仓库展示状态。
+
+    宿主机镜像目标仓库（默认 fnOS）若镜像目录缺失，视为未同步。
+    """
+    if repo.status == "pending":
+        return "pending"
+    if repo.repo_type == "compose" and host_mirror_missing and _mirror_targets_host(repo.local_path):
+        return "pending"
+    return repo.status
+
 
 def add_repo(repo_url: str, branch: str, local_path: str, name: Optional[str] = None, repo_type: str = "compose") -> Dict:
     _ensure_repos_loaded()
