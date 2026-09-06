@@ -271,7 +271,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
+    padding: 20px 16px;
     background: white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
@@ -1004,7 +1004,7 @@ div.repo-status.error .status-dot {
 .stats-bar {
     display: flex;
     gap: 16px;
-    padding: 20px 30px;
+    padding: 20px 16px;
 }
 
 .stats-bar .stat-item {
@@ -1043,7 +1043,7 @@ div.repo-status.error .status-dot {
 .repo-actions-bar {
     display: flex;
     gap: 12px;
-    margin: 0 30px 20px;
+    margin: 0 16px 20px;
     padding: 16px 20px;
     background: #fff;
     border-radius: 16px;
@@ -1056,7 +1056,7 @@ div.repo-status.error .status-dot {
 }
 
 .repo-list {
-    margin: 0 30px 30px;
+    margin: 0 16px 30px;
     overflow: hidden;
     background: #fff;
     border-radius: 16px;
