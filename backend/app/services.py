@@ -469,6 +469,7 @@ MANAGED_APPLICATION_SCRIPT_NAMES = {"update_app.sh", "upgrade_docker_compose_to_
 
 HOST_MOUNT = Path(os.getenv("HOST_MOUNT", "/host"))
 FNOS_DOCKER_ROOT = os.getenv("FNOS_DOCKER_ROOT", "/vol1/1000/Docker")
+HOST_MIRROR_LOCAL_PATH = os.getenv("HOST_MIRROR_LOCAL_PATH", "fnOS")
 
 DATA_DIR = Path(os.getenv("DATA_DIR", APP_ROOT / "data")).resolve()
 DATA_DIR.mkdir(exist_ok=True)
@@ -816,6 +817,19 @@ def _mirror_compose_to_host(repo_dir: Path) -> int:
     return mirrored
 
 
+def _mirror_targets_host(local_path: str) -> bool:
+    """是否把该仓库镜像到宿主机 Docker 目录。
+
+    默认仅镜像 fnOS 仓库（HOST_MIRROR_LOCAL_PATH）；设为空字符串则镜像所有 compose 仓库。
+    """
+    if not HOST_MIRROR_LOCAL_PATH:
+        return True
+    try:
+        return str(_normalize_repo_local_path(local_path)) == HOST_MIRROR_LOCAL_PATH
+    except ValueError:
+        return False
+
+
 def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: str = "compose", max_retries: int = 3) -> Dict:
     """Synchronize a repository while keeping its Git metadata out of mapped files."""
     repo_name = get_repo_name_from_url(repo_url)
@@ -925,7 +939,7 @@ def clone_or_pull_repo(repo_url: str, branch: str, local_path: str, repo_type: s
                         repo_dir.replace(backup_dir)
                     temp_dir.replace(repo_dir)
                     shutil.rmtree(backup_dir, ignore_errors=True)
-                    mirrored = _mirror_compose_to_host(repo_dir)
+                    mirrored = _mirror_compose_to_host(repo_dir) if _mirror_targets_host(local_path) else 0
                     if mirrored:
                         print(f"已同步 {mirrored} 个 compose 文件到宿主机 {FNOS_DOCKER_ROOT}")
                 else:
