@@ -1,0 +1,10 @@
+services:
+   speedtest:
+      container_name: speedtest
+      image: mobufan/speedtest-go-zh:latest
+      restart: always
+      network_mode: bridge
+      ports:
+         - 7878:8989
+      volumes:
+         - ./config:/app/config

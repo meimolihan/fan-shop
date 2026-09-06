@@ -1,0 +1,17 @@
+services:
+  random-pic-api:
+    build: .
+    image: mobufan/random-pic-api:latest
+    container_name: random-pic-api
+    network_mode: bridge
+    restart: always
+    volumes:
+      - ./public/landscape:/app/public/landscape   # 横屏图片目录
+      - ./public/portrait:/app/public/portrait     # 竖屏壁纸目录
+      - ./photos:/app/photos                       # 原始图片目录（用于 classify.py 输入）
+    ports:
+      - 8588:3000
+    environment:
+      - TZ=Asia/Shanghai
+      - PORT=3000
+      - PUBLIC_HOST=http://10.10.10.251:8588

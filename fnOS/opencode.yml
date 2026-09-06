@@ -1,0 +1,19 @@
+services:
+   opencode:
+      container_name: opencode
+      # image: ghcr.nju.edu.cn/anomalyco/opencode
+      image: ghcr.io/anomalyco/opencode:latest
+      restart: always
+      ports:
+         - 3005:3000
+      volumes:
+         - ./workspace:/workspace
+         - ./config:/root/.opencode
+      entrypoint: opencode
+      command: web --hostname 0.0.0.0 --port 3000
+      stdin_open: true
+      tty: true
+      mem_limit: 1500m        # 容器最大物理内存上限1.5GB，防止过度占用主机内存
+      memswap_limit: 2000m    # 物理内存+Swap总上限2GB，超限直接终止容器，保护fnOS宿主机
+      cpus: "1.0"             # 限制容器最多占用1个CPU核心，避免下载任务抢占系统算力
+

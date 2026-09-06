@@ -1,0 +1,25 @@
+services:
+   metube:
+      # image: ghcr.io/alexta69/metube
+      image: mobufan/metube-zh:latest
+      container_name: metube
+      network_mode: bridge
+      restart: always
+      ports:
+         - 8081:8081
+      volumes:
+         - /vol2/1000/downloads/metube:/downloads
+      environment:
+         - http_proxy=http://10.10.10.252:7893
+         - https_proxy=http://10.10.10.252:7893
+         - HTTP_PROXY=http://10.10.10.252:7893
+         - HTTPS_PROXY=http://10.10.10.252:7893
+         - no_proxy=localhost,127.0.0.1,172.17.0.0/16
+         - NO_PROXY=localhost,127.0.0.1,172.17.0.0/16
+         # 如果代理需要认证，格式应为：http://用户名:密码@10.10.10.252:7893
+
+# network_mode: bridge # 桥接网络
+# restart: unless-stopped # 手动停止后不会自动重启，直到 Docker 守护进程重启
+# restart: on-failure # 仅在失败时重启
+# restart: always # 始终重启
+# restart: no # 即容器不会被自动重启，任何情况下都需手动启动

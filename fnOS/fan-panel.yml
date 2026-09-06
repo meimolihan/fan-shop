@@ -1,0 +1,15 @@
+services:
+  fan-panel:
+    image: mobufan/fan-panel:latest
+    container_name: fan-panel
+    volumes:
+    - ./conf:/app/conf
+    - ./uploads:/app/uploads
+    - ./database:/app/database
+    - /vol1/1000:/vol1/1000
+    - /vol2/1000:/vol2/1000
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    # - ./runtime:/app/runtime
+    ports:
+    - 3222:3002
+    restart: always

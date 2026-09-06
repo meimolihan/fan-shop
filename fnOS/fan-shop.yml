@@ -1,0 +1,23 @@
+name: fan-shop
+services:
+  fan-shop:
+    image: mobufan/fan-shop:latest
+    container_name: fan-shop
+    ports:
+      - "8000:8001"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/repos:/app/repos
+      - ./backend/scripts:/app/scripts
+      - ./backend/backup:/app/backup
+      - ./backend/logs:/app/logs
+      - ./backend/image:/app/image
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /:/host:rw
+      - /etc/docker:/etc/docker:rw
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    privileged: true
+    restart: unless-stopped
