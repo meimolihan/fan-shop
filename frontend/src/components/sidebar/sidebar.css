@@ -191,6 +191,12 @@
     background: rgba(0, 0, 0, 0.2);
 }
 
+/* 页面顶栏统一卡片样式（各页共享结构） */
+.top-header {
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+}
+
 .logout-btn {
     display: flex;
     align-items: center;
