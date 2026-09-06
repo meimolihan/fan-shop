@@ -315,9 +315,9 @@ a {
         margin-left: 0 !important;
     }
 
-    /* 为左上角汉堡按钮预留空间，避免遮挡页面标题 */
+    /* 为左上角汉堡按钮预留空间，避免遮挡页面标题（不被各页后加载的 padding 简写覆盖） */
     .top-header {
-        padding-left: 64px;
+        padding-left: 64px !important;
     }
 
     .sidebar-open .main-content {
