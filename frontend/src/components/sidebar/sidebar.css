@@ -315,6 +315,11 @@ a {
         margin-left: 0 !important;
     }
 
+    /* 为左上角汉堡按钮预留空间，避免遮挡页面标题 */
+    .top-header {
+        padding-left: 64px;
+    }
+
     .sidebar-open .main-content {
         transition: margin-left 0.3s ease;
     }
