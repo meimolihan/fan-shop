@@ -799,6 +799,11 @@ def _mirror_compose_to_host(repo_dir: Path) -> int:
     应用名取相对路径的首段；扁平文件则取文件名去掉扩展名。
     """
     host_root = HOST_MOUNT / FNOS_DOCKER_ROOT.lstrip("/")
+    try:
+        host_root.mkdir(parents=True, exist_ok=True)
+    except OSError as exc:
+        print(f"创建宿主机镜像目录失败: {exc}")
+        return 0
     if not host_root.exists():
         return 0
     mirrored = 0
