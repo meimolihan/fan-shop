@@ -122,7 +122,7 @@
     "fan-panel": {
         "title": "Fan-Panel",
         "subtitle": "导航管理面板",
-        "description": "Fan-Panel 是一款轻量级的服务器管理面板，可以快速搭建个人或团队使用的服务器管理平台，支持容器监控、文件管理等功能。",
+        "description": "Fan-Panel 是一款轻量级的服务器管理面板。",
         "tags": ["网络", "监控"],
         "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_fan-panel.html"
     },
