@@ -1226,14 +1226,17 @@ def get_all_repos() -> List[Dict]:
     ]
 
 def _repo_locally_synced(repo) -> bool:
-    """本机仓库内容是否已同步（导出目录存在；脚本仓库还需有同步状态记录）。"""
+    """本机仓库内容是否已同步（导出目录存在；脚本仓库还需同步状态记录且脚本文件真实存在）。"""
     repo_dir = _repo_storage_root(repo.repo_type) / repo.repo_dir_name
     if not repo_dir.exists():
         return False
     if repo.repo_type == "compose":
         return True
     state_key = _script_repo_state_key(repo.url, repo.branch, repo.local_path)
-    return state_key in _load_script_repos_state()
+    rel_paths = _load_script_repos_state().get(state_key, [])
+    if not rel_paths:
+        return False
+    return all((SCRIPTS_DIR / p).is_file() for p in rel_paths)
 
 
 def _effective_repo_status(repo, host_mirror_missing: bool) -> str:
