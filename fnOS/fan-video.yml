@@ -1,0 +1,16 @@
+services:
+  fan-video:
+    image: mobufan/fan-video:latest
+    container_name: fan-video
+    ports:
+      - 9060:8080
+    volumes:
+      - /vol1/1000/Docker/fan-video/data:/data
+      - /vol1/1000/Docker/fan-video/cache:/cache
+      - /vol2/1000/mydisk/Video:/media:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    restart: always
+    network_mode: bridge
