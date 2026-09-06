@@ -119,6 +119,101 @@ docker run -d \
 - 首次登录必须修改管理员密码
 
 
+## 仓库管理指南
+
+### 仓库目录与数据流
+
+所有仓库的**内容都存放在 `meimolihan/fan-shop` 仓库顶层目录**，与程序代码同仓，标签同步发布。应用在「仓库管理」页点「同步」时，会从 GitHub 拉取对应目录，导出到运行时目录：
+
+| 仓库 | 源目录（fan-shop 顶层） | `local_path` | 运行时导出（容器 `/app` ↔ 宿主 `backend`） | 自动镜像宿主机 |
+| --- | --- | --- | --- | --- |
+| 飞牛容器仓库 | `fnOS/` | `fnOS` | `/app/repos/fnOS` ↔ `backend/repos/fnOS` | `/vol1/1000/Docker/<应用>/docker-compose.yml` |
+| 绿联新系统容器仓库 | `UgreenNew/` | `UgreenNew` | `/app/repos/UgreenNew` ↔ `backend/repos/UgreenNew` | 无 |
+| 绿联旧系统容器仓库 | `Ugreen（Abandoned）/` | `Ugreen（Abandoned）` | `/app/repos/Ugreen（Abandoned）` ↔ `backend/repos/Ugreen（Abandoned）` | 无 |
+| 极空间容器仓库 | `ZSpace/` | `ZSpace` | `/app/repos/ZSpace` ↔ `backend/repos/ZSpace` | 无 |
+| 脚本仓库 | `Scripts/`（`.sh`） | `Scripts` | `/app/scripts` ↔ `backend/scripts` | 无 |
+
+> 说明：源码目录一律使用**扁平** `<应用名>.yml`；同步导出时会自动重构为 `<应用>/docker-compose.yml` 子目录供部署使用。因此源代码是扁平的、运行时目录是嵌套的，属正常现象。
+
+### 添加 Compose 文件（飞牛 / 绿联新 / 绿联旧 / 极空间）
+
+1. 在对应顶层目录下添加**扁平** `<应用名>.yml`（一个应用一个文件，不要建子目录），YAML 为标准 Docker Compose 格式；
+2. 提交并推送到 `meimolihan/fan-shop` 的 `main` 分支；
+3. 在「仓库管理」页点该仓库的「同步」，导出后自动重构为 `<应用>/docker-compose.yml` 并出现在部署页；
+4. 飞牛仓库同步后还会自动镜像到宿主机 `/vol1/1000/Docker/<应用>/docker-compose.yml`。若该目录被删除，UI 会显示「未同步」，再次同步会自动重建目录并镜像。
+
+```bash
+# 在本仓库检出目录下操作
+cd fan-shop
+
+cat > fnOS/dufs-zh.yml <<'EOF'
+services:
+  dufs-zh:
+    image: mobufan/dufs-zh:latest
+    container_name: dufs-zh
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - /vol2/1000/file:/data
+EOF
+
+git add fnOS/dufs-zh.yml
+git commit -m "feat: 新增 dufs-zh 应用模板"
+git push origin main
+```
+
+### 添加脚本（脚本仓库）
+
+1. 在 `Scripts/` 顶层添加 `<名称>.sh`（UTF-8 编码，首行 `#!/bin/bash`，建议 `chmod +x`）；
+2. 提交推送到 `main` 分支；
+3. 在「仓库管理」页点「同步」，脚本即导出到 `/app/scripts`（宿主 `backend/scripts/`）。
+
+### 脚本仓库的具体使用方法
+
+**同步**：「仓库管理」→「脚本仓库」→「同步」。成功后可在仓库页浏览/查看脚本内容。
+
+**脚本存放位置**（同步后两者是同一目录）：
+
+- 容器内：`/app/scripts`
+- 宿主机：`/vol1/1000/compose/fan-shop/backend/scripts/`
+
+**执行方法**（UI 只提供浏览，不提供执行入口；需在 fnOS 宿主机终端执行）：
+
+```bash
+sudo -i
+bash /vol1/1000/compose/fan-shop/backend/scripts/dc_inst_halo.sh      # 一键安装 Halo
+bash /vol1/1000/compose/fan-shop/backend/scripts/docker_ps_list.sh    # 查看 Docker 容器列表
+bash /vol1/1000/compose/fan-shop/backend/scripts/compose_up_all.sh    # 批量启动全部 Compose 项目
+```
+
+**脚本分类速查**：
+
+| 前缀 | 用途 |
+| --- | --- |
+| `dc_inst_*.sh` | 一键安装常见应用（halo、emby、xunlei、fan-shop、uptime-kuma 等） |
+| `docker_*.sh` | Docker 管理：容器/镜像/卷/网络/端口/登录/安装卸载 |
+| `compose_*.sh` | Compose 批处理：全部 up / update / down / purge / 备份恢复 |
+| `fnos_disk_*` / `smb_*` / `nginx*` / `fail2ban*` | fnOS 磁盘挂载、SMB、Nginx、防火墙、系统工具 |
+| `git_*.sh` | Git 项目批量操作（clone / pull / push / tag 等） |
+| `pve_*.sh` | Proxmox VE 相关（虚拟机/LXC/网络/存储） |
+| `lx_*.sh` | Linux 系统信息与运维辅助（磁盘、核数、网络、用户、定时任务等） |
+| `install.sh` | 一键部署 fan-shop 自身（`Scripts/install.sh`） |
+
+**应用自动生成的脚本**（无需通过仓库添加，由应用在更新/升级时生成到 `/app/scripts`）：
+
+- `update_app.sh`：检测到新版本时生成，用于一键升级 fan-shop 应用本身
+- `upgrade_docker_compose_to_v2.sh`：用于将 Docker Compose v1 迁移到 v2
+
+**安全提示**：脚本以 root 权限在宿主机执行，请先查看内容、只运行来源可信的脚本。
+
+### 常见问题
+
+- **添加文件后重新构建镜像/重启，UI 数量没变？** 重启不会重新导出内容，必须在该仓库页点「同步」，它才会从 GitHub 重新拉取、导出、重构并镜像。
+- **为什么源码是扁平文件、运行目录是子目录？** 这是导出的自动重构行为：源码统一 `<应用名>.yml`，导出后变成 `<应用>/docker-compose.yml`，两者配套。
+- **飞牛仓库 UI 显示「未同步」，但文件都在？** 说明宿主机 `/vol1/1000/Docker` 目录缺失（被手动删除或系统清理）；点一次「同步」即可自动重建并镜像。
+
+
 ## 项目结构
 
 ```
