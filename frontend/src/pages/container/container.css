@@ -670,6 +670,20 @@ body {
         gap: 12px;
     }
 
+    /* 卡片区收窄 30px 边距，让容器卡更宽、更好触控 */
+    .containers-grid {
+        margin: 0 8px 16px;
+        border-radius: 14px;
+    }
+
+    .containers-list {
+        padding: 10px;
+    }
+
+    .container-card {
+        padding: 12px;
+    }
+
     .container-actions {
         width: 100%;
         justify-content: flex-end;

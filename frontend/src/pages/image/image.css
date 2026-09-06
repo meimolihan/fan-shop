@@ -1244,17 +1244,30 @@ body {
         flex-direction: column;
     }
 
+    /* 镜像卡纵向堆叠：头部信息整行、状态徽标、操作按钮一行收尾，
+       避免信息列被挤成 ~70px 窄列 */
     .image-card {
-        align-items: flex-start;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
     }
 
-    .image-state {
+    .image-card .image-info {
+        width: 100%;
+        flex: none;
+    }
+
+    .image-card .image-state {
         margin-left: 0;
+        align-self: flex-start;
     }
 
-    .image-actions {
-        margin-left: auto;
+    .image-card .image-actions {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+        gap: 8px;
     }
 
     .image-action-bar {
