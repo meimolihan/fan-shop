@@ -1,0 +1,369 @@
+/* ============================================================
+   明暗模式悬浮切换按钮（参考 dufs-zh 效果）
+   悬浮于左下角，圆形按钮，太阳/月亮图标按主题互切，
+   悬停高亮发光，切换时圆形展开动画。
+   ============================================================ */
+
+/* ---- 悬浮按钮 ---- */
+.theme-toggle {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 200;
+    cursor: pointer;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+        color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle:hover {
+    background: #eef2ff;
+    color: #667eea;
+    border-color: rgba(102, 126, 234, 0.45);
+    box-shadow: 0 10px 26px rgba(102, 126, 234, 0.35);
+    transform: translateY(-2px) scale(1.06);
+}
+
+.theme-toggle:active {
+    transform: scale(0.9);
+}
+
+.theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.45);
+}
+
+.theme-toggle .theme-icon {
+    position: absolute;
+    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1),
+        transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[data-theme="light"] .theme-toggle .theme-icon-sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+}
+html[data-theme="light"] .theme-toggle .theme-icon-moon {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+}
+html[data-theme="dark"] .theme-toggle .theme-icon-sun {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+}
+html[data-theme="dark"] .theme-toggle .theme-icon-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.6);
+}
+
+html[data-theme="dark"] .theme-toggle {
+    background: #1e293b;
+    border-color: #334155;
+    color: #facc15;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+html[data-theme="dark"] .theme-toggle:hover {
+    background: #2b3a55;
+    color: #fbbf24;
+    border-color: rgba(250, 204, 21, 0.5);
+    box-shadow: 0 10px 26px rgba(250, 204, 21, 0.28);
+}
+
+/* 关闭 View Transitions 默认十字淡入淡出，只保留自定义圆形展开动画 */
+::view-transition-old(root) {
+    animation: none;
+}
+
+/* 不支持 View Transitions 时的纯颜色过渡兜底 */
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+    transition: background-color 350ms cubic-bezier(0.4, 0, 0.2, 1) !important,
+        color 350ms cubic-bezier(0.4, 0, 0.2, 1) !important,
+        border-color 350ms cubic-bezier(0.4, 0, 0.2, 1) !important,
+        box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ============================================================
+   暗色主题（data-theme="dark"，全部页面生效）
+   ============================================================ */
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+    background: #0b1220;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .main-content,
+html[data-theme="dark"] .dashboard-container,
+html[data-theme="dark"] .content-area,
+html[data-theme="dark"] .workbench,
+html[data-theme="dark"] .container-logs .main-content {
+    background: #0b1220;
+}
+
+/* ---- 顶栏与标题 ---- */
+html[data-theme="dark"] .top-header {
+    background: #131c2f;
+    border-color: #2a3752;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5 {
+    color: #f1f5f9;
+}
+
+html[data-theme="dark"] .header-left h1,
+html[data-theme="dark"] .header-title,
+html[data-theme="dark"] .page-title {
+    color: #eef2ff;
+}
+
+/* ---- 通用卡片 ---- */
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .stats-cards .stat-item,
+html[data-theme="dark"] .repo-card,
+html[data-theme="dark"] .container-card,
+html[data-theme="dark"] .image-card,
+html[data-theme="dark"] .recommend-card,
+html[data-theme="dark"] .version-card,
+html[data-theme="dark"] .version-section,
+html[data-theme="dark"] .mirror-card,
+html[data-theme="dark"] .mirror-section,
+html[data-theme="dark"] .settings-section,
+html[data-theme="dark"] .backup-card,
+html[data-theme="dark"] .deploy-queue-item,
+html[data-theme="dark"] .connectivity-card,
+html[data-theme="dark"] .host-info-card,
+html[data-theme="dark"] .docker-info-card,
+html[data-theme="dark"] .user-section,
+html[data-theme="dark"] .file-upload-area,
+html[data-theme="dark"] .conversation-actions-card,
+html[data-theme="dark"] .conversation-history-card,
+html[data-theme="dark"] .chat-card,
+html[data-theme="dark"] .logs-container,
+html[data-theme="dark"] .history-section,
+html[data-theme="dark"] .param-section,
+html[data-theme="dark"] .network-section,
+html[data-theme="dark"] .progress-panel,
+html[data-theme="dark"] .terminal-wrapper,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .login-box {
+    background: #151f33;
+    border-color: #2a3752;
+    color: #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* 卡片次级文本 */
+html[data-theme="dark"] .card-description,
+html[data-theme="dark"] .card-subtitle,
+html[data-theme="dark"] .stat-value-sub,
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .host-info-label,
+html[data-theme="dark"] .host-info-value,
+html[data-theme="dark"] .repo-url,
+html[data-theme="dark"] .version-date,
+html[data-theme="dark"] .container-status,
+html[data-theme="dark"] .image-tag,
+html[data-theme="dark"] .deploy-queue-state,
+html[data-theme="dark"] .empty-state p,
+html[data-theme="dark"] .no-yml {
+    color: #94a3b8;
+}
+
+/* ---- 分割线/条目底边 ---- */
+html[data-theme="dark"] .log-entry,
+html[data-theme="dark"] .logs-header,
+html[data-theme="dark"] .repo-card + .repo-card,
+html[data-theme="dark"] .connector-item,
+html[data-theme="dark"] .section-divider {
+    border-color: #2a3752;
+}
+
+/* ---- 表单与控件 ---- */
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #64748b;
+}
+
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] textarea:focus,
+html[data-theme="dark"] input:focus-visible {
+    border-color: #667eea;
+    outline: none;
+}
+
+/* 搜索/筛选条背景 */
+html[data-theme="dark"] .search-box,
+html[data-theme="dark"] .filter-bar,
+html[data-theme="dark"] .filters-bar,
+html[data-theme="dark"] .action-bar,
+html[data-theme="dark"] .stats-bar,
+html[data-theme="dark"] .repo-actions-bar {
+    background-color: #131c2f;
+    border-color: #2a3752;
+}
+
+html[data-theme="dark"] .search-box input {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+/* ---- 表格 ---- */
+html[data-theme="dark"] .user-table th,
+html[data-theme="dark"] .params-table th,
+html[data-theme="dark"] .user-table td,
+html[data-theme="dark"] .params-table td {
+    border-color: #2a3752;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .user-table thead th,
+html[data-theme="dark"] .params-table thead th,
+html[data-theme="dark"] .logs-header {
+    background: #131c2f;
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .user-table tbody tr:hover,
+html[data-theme="dark"] .params-table tbody tr:hover,
+html[data-theme="dark"] .log-entry:hover {
+    background: #1a2740;
+}
+
+/* ---- 暗色下的浅色小块（灰白按钮/徽章） ---- */
+html[data-theme="dark"] .level-badge,
+html[data-theme="dark"] .tag,
+html[data-theme="dark"] .update-status,
+html[data-theme="dark"] .badge {
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .action-btn,
+html[data-theme="dark"] .refresh-btn,
+html[data-theme="dark"] .btn-secondary {
+    background-color: #223049;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+html[data-theme="dark"] .action-btn:hover,
+html[data-theme="dark"] .refresh-btn:hover,
+html[data-theme="dark"] .btn-secondary:hover {
+    background-color: #2b3a55;
+    color: #e2e8f0;
+}
+
+/* 镜像/备份列表条目 */
+html[data-theme="dark"] .mirror-item,
+html[data-theme="dark"] .history-item,
+html[data-theme="dark"] .file-item {
+    background: #0f172a;
+    border-color: #2a3752;
+    color: #e2e8f0;
+}
+
+/* ---- AI 对话 ---- */
+html[data-theme="dark"] .chat-toolbar,
+html[data-theme="dark"] .chat-history,
+html[data-theme="dark"] .chat-composer,
+html[data-theme="dark"] .message-content,
+html[data-theme="dark"] .composer-input-group input {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-color: #2a3752;
+}
+
+html[data-theme="dark"] .message.user .message-content {
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+    color: #fff;
+}
+
+/* ---- 终端（xterm 自带深色，仅修外壳） ---- */
+html[data-theme="dark"] .terminal-container {
+    background: #0f172a;
+    border-color: #2a3752;
+}
+
+/* ---- 滚动条 ---- */
+html[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 8px;
+}
+
+/* ---- 遮罩与弹窗背景 ---- */
+html[data-theme="dark"] .modal-overlay {
+    background: rgba(2, 6, 17, 0.7);
+}
+
+html[data-theme="dark"] .modal-header {
+    border-color: #2a3752;
+}
+
+html[data-theme="dark"] .modal-close {
+    color: #94a3b8;
+}
+
+/* ---- 登录/注册等无侧边栏页 ---- */
+html[data-theme="dark"] .login-container,
+html[data-theme="dark"] .register-container,
+html[data-theme="dark"] .forgot-container {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+}
+
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .password-field input {
+    background-color: #0f172a;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+html[data-theme="dark"] .register-link,
+html[data-theme="dark"] .hint,
+html[data-theme="dark"] .login-tip {
+    color: #94a3b8;
+}
+
+/* ---- 暗色下心跳动画的 AI 悬浮窗一并深色化 ---- */
+html[data-theme="dark"] .ai-widget,
+html[data-theme="dark"] .ai-chat-panel {
+    background: #151f33;
+    border-color: #2a3752;
+    color: #e2e8f0;
+}
