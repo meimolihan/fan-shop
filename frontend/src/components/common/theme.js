@@ -27,6 +27,7 @@
     function toggleTheme() {
         var current = resolveTheme(getPreferredTheme());
         var next = current === "dark" ? "light" : "dark";
+        localStorage.setItem(STORAGE_KEY, next);
 
         if (document.startViewTransition) {
             var transition = document.startViewTransition(function () {
