@@ -652,7 +652,10 @@ body {
     }
 
     .stats-bar {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+        padding: 16px;
     }
 
     .filter-bar {
@@ -670,6 +673,13 @@ body {
     .container-actions {
         width: 100%;
         justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-bar {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
     }
 }
 

@@ -1216,6 +1216,17 @@ body {
     .image-grid {
         grid-template-columns: 1fr;
     }
+
+    /* 统计卡自适应 2 列 */
+    .image-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+    }
+
+    .content-area {
+        padding: 15px 16px;
+    }
     
     .top-header {
         padding: 15px 20px;

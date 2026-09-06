@@ -853,6 +853,18 @@ div.repo-status.error .status-dot {
     .repo-grid {
         grid-template-columns: 1fr;
     }
+
+    /* 统计卡自适应 2 列 */
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .content-area {
+        padding: 15px 16px;
+    }
     
     .top-header {
         padding: 15px 20px;

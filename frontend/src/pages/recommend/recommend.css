@@ -281,11 +281,21 @@ body {
     .main-content {
         margin-left: 0;
     }
-    
+
+    /* 内容区收起大边距，卡片更充分利用屏宽 */
+    .content-area {
+        padding: 15px 16px;
+    }
+
     .recommend-grid {
         grid-template-columns: 1fr;
+        gap: 14px;
     }
-    
+
+    .recommend-card {
+        padding: 18px;
+    }
+
     .card-actions {
         flex-direction: column;
     }

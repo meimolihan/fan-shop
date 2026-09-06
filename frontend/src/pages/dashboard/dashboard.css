@@ -805,12 +805,30 @@ body {
         margin-left: 0;
     }
     
+    /* 统计卡自适应改为 2 列（≤600px 时留 1 列），大幅减少纵向滚动 */
     .stats-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 14px;
+    }
+    
+    .card {
+        padding: 16px;
+    }
+    
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        font-size: 20px;
     }
     
     .action-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+    
+    .action-btn {
+        padding: 18px 12px;
     }
     
     .header-left h1 {
@@ -819,10 +837,26 @@ body {
 }
 
 @media (max-width: 480px) {
-    .action-grid {
-        grid-template-columns: 1fr;
-    }
     .stats-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
+    }
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        font-size: 18px;
+    }
+    /* 2 列统计卡内：标签可换行、数值收紧，避免撑出卡片 */
+    .card-content {
+        flex-wrap: wrap;
+        gap: 4px 10px;
+    }
+    .card-content h3 {
+        white-space: normal;
+        font-size: 13px;
+    }
+    .card-value {
+        font-size: 26px;
     }
 }
