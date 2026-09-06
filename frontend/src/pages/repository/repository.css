@@ -1102,10 +1102,88 @@ div.repo-status.error .status-dot {
 }
 
 @media (max-width: 640px) {
-    .stats-bar, .repo-actions-bar, .repo-list { margin-left: 16px; margin-right: 16px; }
-    .stats-bar { padding-left: 16px; padding-right: 16px; }
-    .stats-bar .stat-item { flex-basis: 100%; }
-    .repo-list .filter-bar { align-items: stretch; flex-direction: column; gap: 12px; }
-    .repo-list .search-box, .repo-list .search-box input { width: 100%; }
-    .repo-card .repo-actions { margin-left: auto; }
+    .main-content {
+        padding: 8px;
+    }
+
+    .stats-bar, .repo-actions-bar, .repo-list {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    .stats-bar {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .stats-bar .stat-item {
+        flex-basis: 100%;
+    }
+
+    .repo-list-content {
+        padding: 10px;
+    }
+
+    .repo-actions-bar {
+        padding: 12px;
+    }
+
+    .repo-list .filter-bar {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .repo-list .search-box, .repo-list .search-box input {
+        width: 100%;
+    }
+
+    /* 仓库卡重排：图标+标题横行、状态徽标与操作按钮成第二行，
+       信息列不再被挤成 ~100px 窄列 */
+    .repo-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 10px 12px;
+        padding: 14px;
+    }
+
+    .repo-card .repo-icon {
+        align-self: center;
+    }
+
+    .repo-card .repo-info {
+        flex: 1 1 calc(100% - 60px);
+        min-width: 0;
+    }
+
+    .repo-card .repo-info h3 {
+        flex-wrap: wrap;
+        word-break: break-all;
+    }
+
+    .repo-card .repo-info p {
+        white-space: normal;
+        word-break: break-all;
+        line-height: 1.45;
+    }
+
+    .repo-card .repo-status-wrap {
+        margin-left: 0;
+    }
+
+    .repo-card .repo-actions {
+        margin-left: auto;
+    }
+
+    .repo-actions-bar .add-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+    }
+
+    .modal-content {
+        width: calc(100% - 32px);
+        margin: 48px auto;
+        max-height: calc(100vh - 96px);
+    }
 }
