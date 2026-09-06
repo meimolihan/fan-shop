@@ -125,5 +125,12 @@
         "description": "Fan-Panel 是一款轻量级的服务器管理面板，可以快速搭建个人或团队使用的服务器管理平台，支持容器监控、文件管理等功能。",
         "tags": ["网络", "监控"],
         "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_fan-panel.html"
+    },
+    "md": {
+        "title": "MD",
+        "subtitle": "Markdown 在线文档",
+        "description": "MD 云文档 是一款基于 Markdown 的现代化在线文档管理系统。",
+        "tags": ["文档", "编辑"],
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_md.html"
     }
 }

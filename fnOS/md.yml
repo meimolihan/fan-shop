@@ -1,0 +1,13 @@
+services:
+   md:
+      image: mobufan/md:latest
+      container_name: md
+      network_mode: bridge
+      restart: always
+      environment:
+        #  - reg=true # 开放注册
+         - reg=false  # 关闭注册
+      volumes:
+         - ./data:/md/data
+      ports:
+         - 9900:9900
