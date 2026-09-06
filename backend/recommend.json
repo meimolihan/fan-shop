@@ -5,7 +5,7 @@
         "subtitle": "轻量级 BitTorrent 客户端",
         "description": "功能强大的开源 BitTorrent 客户端，支持远程管理、RSS订阅、Web UI 等功能。",
         "tags": ["下载工具", "BT"],
-        "tutorial": "fei-niu-nasbu-shu-qbittorrentxia-zai-qi"
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_qbittorrent.html"
     },
     "transmission": {
         "title": "Transmission",
