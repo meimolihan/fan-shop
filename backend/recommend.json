@@ -12,14 +12,14 @@
         "subtitle": "快速轻量级 BT 客户端",
         "description": "开源的 BitTorrent 客户端，以简洁高效著称，支持 Web 界面远程管理。",
         "tags": ["下载工具", "BT"],
-        "tutorial": "fei-niu-nasbu-shu-transmissionxia-zai-qi"
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_transmission.html"
     },
     "emby": {
         "title": "Emby",
         "subtitle": "个人媒体服务器",
         "description": "强大的媒体服务器，支持自动刮削元数据、多设备播放、实时转码、直播电视等功能。",
         "tags": ["媒体", "影音"],
-        "tutorial": "fei-niu-nasbu-shu-embymei-ti-fu-wu-qi"
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_emby.html"
     },
     "moviepilot": {
         "title": "MoviePilot",
@@ -40,7 +40,7 @@
         "subtitle": "网盘文件列表程序",
         "description": "支持多种网盘的文件列表程序，可统一管理阿里云盘、百度网盘、天翼云盘等。",
         "tags": ["网盘", "文件管理"],
-        "tutorial": "docker-rong-qi-openlist-bu-shu-jiao-cheng"
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_openlist.html"
     },
     "apprise": {
         "title": "Apprise",
@@ -61,14 +61,14 @@
         "subtitle": "IPTV 流媒体服务",
         "description": "自托管 IPTV 直播源管理系统，在线收看电视直播节目。",
         "tags": ["影音", "直播"],
-        "tutorial": ""
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_iptv.html"
     },
     "lucky": {
         "title": "Lucky",
         "subtitle": "DDNS 与内网穿透工具",
         "description": "集动态域名解析、反向代理、证书管理、内网穿透于一身的全能网络工具。",
         "tags": ["网络", "DDNS"],
-        "tutorial": ""
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_lucky.html"
     },
     "mdc-ng": {
         "title": "MDC‑NG",
@@ -110,6 +110,6 @@
         "subtitle": "站点监控告警面板",
         "description": "开源轻量站点监控工具，检测网站、服务在线状态，异常时推送告警通知。",
         "tags": ["监控", "告警"],
-        "tutorial": ""
+        "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_uptime-kuma.html"
     }
 }
