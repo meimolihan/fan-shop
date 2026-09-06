@@ -136,7 +136,7 @@
     "random-pic-api": {
         "title": "随机图片 API",
         "subtitle": "随机图片 API 接口",
-        "description": "一个轻量级的随机壁纸 API 服务，能够根据设备类型自动提供横屏或竖屏壁纸，支持 WebP 格式转换。",
+        "description": "轻量级的随机壁纸 API 服务，可根据设备类型自动横屏或竖屏壁纸，支持 WebP 格式转换。",
         "tags": ["图片", "壁纸"],
         "tutorial": "https://cmdbox.meimolihan.eu.org/c/dc_inst_random-pic-api.html"
     }
