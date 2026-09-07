@@ -22,19 +22,14 @@ body {
 }
 
 .bg-decoration {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     overflow: hidden;
     pointer-events: none;
-}
-
-/* 移除历史遗留的装饰圆与浮动动画：仅保留纯净壁纸渐变，
-   登录窗口不再渲染任何残留背景元素 */
-.bg-decoration {
-    display: none;
+    z-index: 0;
 }
 
 .circle {
