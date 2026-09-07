@@ -1080,3 +1080,23 @@ html[data-theme="dark"] #deleteUserModal .modal-body {
         min-height: 44px;
     }
 }
+
+/* ============================================================
+   认证页（登录/注册/找回/改密）：明暗切换只作用于登录窗口，
+   壁纸（渐变背景）始终不变，还原最初的紫色渐变 + 装饰圆
+   ============================================================ */
+html[data-theme="dark"] body:has(.login-container),
+html[data-theme="dark"] body:has(.register-container),
+html[data-theme="dark"] body:has(.forgot-container) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+html[data-theme="dark"] .login-container,
+html[data-theme="dark"] .register-container,
+html[data-theme="dark"] .forgot-container {
+    background: transparent;
+}
+
+html[data-theme="dark"] .logo p {
+    color: #94a3b8;
+}

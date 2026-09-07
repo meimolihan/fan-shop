@@ -357,3 +357,40 @@ body {
         font-size: 16px;
     }
 }
+
+/* 短屏桌面：垂直方向可滚动，避免登录窗口被裁切无法点击提交 */
+@media (min-width: 481px) and (max-height: 720px) {
+    body {
+        overflow-y: auto;
+        align-items: flex-start;
+        padding: 40px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    .login-container {
+        padding: 14px;
+    }
+
+    .login-box {
+        padding: 28px 18px;
+    }
+
+    .form-group input,
+    .password-field input {
+        min-height: 48px;
+    }
+
+    .links {
+        flex-wrap: wrap;
+        gap: 10px 12px;
+    }
+
+    .clear-cache-btn {
+        min-height: 44px;
+    }
+}
