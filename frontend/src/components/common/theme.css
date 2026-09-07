@@ -957,6 +957,84 @@ html[data-theme="dark"] select:-webkit-autofill {
 }
 
 /* ============================================================
+   深色文字×深底色 对比修复合集：
+   - 仪表盘主机/资源卡百分比值（原 #0f172a，暗色下不可读 → 白色）
+   - 仓库卡标题（.repo-info h3 特异性高于通用 h3 规则，需定向覆盖）
+   - 仓库卡状态徽标文字（active/pending/syncing/error）
+   - 仓库「清空本地」弹窗文字与输入框
+   ============================================================ */
+html[data-theme="dark"] .host-info-pct-value {
+    color: #fff;
+}
+
+html[data-theme="dark"] .repo-card .repo-info h3 {
+    color: #f1f5f9;
+}
+
+html[data-theme="dark"] div.repo-status.active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #4ade80;
+}
+
+html[data-theme="dark"] div.repo-status.pending {
+    background: rgba(156, 163, 175, 0.14);
+    color: #9ca3af;
+}
+
+html[data-theme="dark"] div.repo-status.syncing {
+    background: rgba(245, 158, 11, 0.14);
+    color: #f59e0b;
+}
+
+html[data-theme="dark"] div.repo-status.error {
+    background: rgba(239, 68, 68, 0.14);
+    color: #f87171;
+}
+
+html[data-theme="dark"] .clear-local-modal .modal-body {
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .clear-local-modal .danger-text {
+    color: #f87171;
+}
+
+html[data-theme="dark"] .clear-local-modal .clear-local-hint {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .clear-local-modal .clear-local-input {
+    background: #0f172a;
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .clear-local-modal .clear-local-input::placeholder {
+    color: #64748b;
+}
+
+/* ---- 同问题追加：弹窗内深色正文与次级文字 ---- */
+html[data-theme="dark"] .empty-search p {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .detail-label {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .detail-value {
+    color: #e2e8f0;
+}
+
+html[data-theme="dark"] .repo-type-option small {
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] #deleteUserModal .modal-body {
+    color: #e2e8f0;
+}
+
+/* ============================================================
    移动端触控适配：禁用 hover 粘滞、点击热区 ≥ 44px
    仅对本次涉及的交互组件生效，桌面 hover 不受影响
    ============================================================ */
