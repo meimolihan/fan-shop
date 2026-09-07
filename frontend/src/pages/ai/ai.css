@@ -71,4 +71,6 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
     .chat-toolbar, .chat-history, .chat-composer { padding: 16px; }
     .chat-message { padding: 12px; }
     .composer-input-group { gap: 6px; padding: 6px 6px 6px 14px; }
+    .composer-actions .app-button { width: 44px; height: 44px; }
+    .app-button { min-height: 44px; }
 }

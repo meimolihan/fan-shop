@@ -1007,4 +1007,8 @@ body {
         width: 44px;
         height: 44px;
     }
+
+    .btn {
+        min-height: 44px;
+    }
 }

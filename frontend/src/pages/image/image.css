@@ -1274,6 +1274,11 @@ body {
     .image-action-bar .add-btn {
         width: 100%;
         justify-content: center;
+        min-height: 44px;
+    }
+
+    .image-import-submit {
+        min-height: 44px;
     }
 
     .search-bar {
@@ -1326,6 +1331,13 @@ body {
         margin-left: 0;
         justify-content: flex-end;
         gap: 8px;
+    }
+
+    /* 图标操作按钮扩大至 44px，满足移动端触控热区 */
+    .image-card .image-actions .action-btn {
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
     }
 
     .image-action-bar {

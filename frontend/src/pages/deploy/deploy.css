@@ -818,6 +818,12 @@ body {
         flex: 1;
         min-width: 120px;
     }
+
+    /* 展开 YML 文件列表按钮扩大至 44px，满足触控热区 */
+    .file-picker-toggle {
+        width: 44px;
+        height: 44px;
+    }
 }
 
 .deploy-progress-panel {
