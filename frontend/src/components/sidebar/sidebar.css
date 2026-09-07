@@ -332,13 +332,13 @@ a {
         position: fixed;
         left: 12px;
         top: 12px;
-        width: 42px;
-        height: 42px;
+        width: 56px;
+        height: 56px;
         border: 0;
-        border-radius: 10px;
+        border-radius: 50%;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #fff;
-        font-size: 18px;
+        font-size: 20px;
         cursor: pointer;
         z-index: 102;
         box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
