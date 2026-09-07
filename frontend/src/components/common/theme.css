@@ -525,6 +525,26 @@ html[data-theme="dark"] .repo-icon {
     color: #cbd5e1;
 }
 
+/* ---- 镜像卡操作按钮（导出/删除）浅色底修复（页面规则带 !important 需同级对抗） ---- */
+html[data-theme="dark"] .image-actions .action-btn {
+    background: #1e293b !important;
+    color: #94a3b8;
+}
+
+html[data-theme="dark"] .image-actions .action-btn:hover {
+    background: #2a3752 !important;
+}
+
+html[data-theme="dark"] .image-actions .export-btn,
+html[data-theme="dark"] .image-actions .export-btn:hover {
+    color: #38bdf8;
+}
+
+html[data-theme="dark"] .image-actions .delete-btn,
+html[data-theme="dark"] .image-actions .delete-btn:hover {
+    color: #f87171;
+}
+
 /* ---- AI 对话输入区 ---- */
 html[data-theme="dark"] .composer-input-group,
 html[data-theme="dark"] .composer-input-group .chat-composer {

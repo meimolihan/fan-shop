@@ -1299,6 +1299,23 @@ body {
         flex: none;
     }
 
+    .image-card .image-details {
+        min-width: 0;
+    }
+
+    /* 元信息（ID/标签/大小/时间）允许换行，避免 nowrap 撑破卡片宽度溢出 */
+    .image-card .image-info p {
+        flex-wrap: wrap;
+        gap: 6px 8px;
+        white-space: normal;
+    }
+
+    .image-card .image-info p span {
+        white-space: normal;
+        word-break: break-all;
+        line-height: 1.4;
+    }
+
     .image-card .image-state {
         margin-left: 0;
         align-self: flex-start;
