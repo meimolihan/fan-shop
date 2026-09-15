@@ -66,7 +66,6 @@ grep -n '^BUILD_DATE =' backend/app/version.py
 # ===================== 写发版备注 =====================
 info "写入发版备注 RELEASE_NOTES.md"
 {
-  printf '# %s\n\n' "${TAG}"
   if [ -n "${MSG}" ]; then
     printf '%s\n' "${MSG}"
   fi
