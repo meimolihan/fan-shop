@@ -291,6 +291,37 @@ docker compose pull && docker compose up -d   # 升级到最新镜像
 docker compose logs -f fan-shop # 查看日志
 ```
 
+## 安装与运维
+
+除 Docker 外，fan-shop 也可直接以 systemd 服务运行在宿主机上（公开仓库，脚本可在线拉取）：
+
+```bash
+# 安装最新版（默认端口 8001，数据在 /opt/fan-shop/backend/data）
+bash <(curl -fsSL https://raw.githubusercontent.com/meimolihan/fan-shop/main/scripts/install.sh)
+
+# 指定版本安装
+bash <(curl -fsSL https://raw.githubusercontent.com/meimolihan/fan-shop/main/scripts/install.sh) v2.1.7
+```
+
+systemctl 常用命令：
+
+```bash
+systemctl status fan-shop          # 查看服务状态
+systemctl restart fan-shop         # 重启
+systemctl stop fan-shop            # 停止
+systemctl enable fan-shop          # 开机自启
+journalctl -u fan-shop -f          # 实时日志
+```
+
+卸载（默认保留数据）：
+
+```bash
+bash /opt/fan-shop/scripts/uninstall.sh          # 卸载服务与程序，保留数据
+bash /opt/fan-shop/scripts/uninstall.sh --purge  # 彻底卸载（含数据）
+```
+
+> 安装脚本会创建 venv 安装 Python 依赖，并以 root 运行（访问 Docker socket 与宿主机）。docker CLI 缺失时管理功能不可用。
+
 ## 版本信息
 
 | 版本 | 日期 | 更新内容 |

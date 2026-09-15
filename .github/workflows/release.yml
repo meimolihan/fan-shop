@@ -31,6 +31,7 @@ jobs:
           mkdir -p "dist/fan-shop-${VER}"
           cp -r backend frontend "dist/fan-shop-${VER}/"
           cp -r Dockerfile docker-compose.yml README.md "dist/fan-shop-${VER}/"
+          cp -r scripts "dist/fan-shop-${VER}/"
           find "dist/fan-shop-${VER}" -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
           find "dist/fan-shop-${VER}" -type f -name '*.pyc' -delete
           tar czf "fan-shop-${VER}.tar.gz" -C dist "fan-shop-${VER}"
