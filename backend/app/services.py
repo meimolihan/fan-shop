@@ -4284,7 +4284,7 @@ def create_docker_network(name: str, driver: str = "bridge") -> dict:
 
 # ============ 容器备份相关函数 ============
 
-BACKUPS_DIR = Path("/app/backup")
+BACKUPS_DIR = Path(os.getenv("BACKUP_DIR", "/app/backup"))
 BACKUPS_DIR.mkdir(parents=True, exist_ok=True)
 
 VOLUMES_DIR = Path("/host/var/lib/docker/volumes")
