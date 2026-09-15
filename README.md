@@ -268,7 +268,7 @@ fan-shop/
 
 ```bash
 # 一键发版（bump 版本号 -> push main -> 打 tag v*）
-bash scripts/build-and-push.sh v2.1.8 --yes
+bash scripts/build-and-push.sh v2.1.8 --yes -m "本次发布说明"
 ```
 
 推送 `v*` tag 后自动构建（单条 workflow run）：

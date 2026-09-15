@@ -52,6 +52,7 @@ jobs:
           files: |
             fan-shop-${{ steps.version.outputs.VERSION }}.tar.gz
             SHA256SUMS
+          body_path: RELEASE_NOTES.md
           generate_release_notes: true
 
   docker:
