@@ -2,9 +2,9 @@
 #
 # fan-shop - 发布脚本（触发 GitHub Actions 自动构建）
 # 不在本地编译任何产物：仅更新版本号、推送代码并打 v 开头 tag。
-# 推送 tag 后由 GitHub Actions 自动完成发布：
-#   release.yml -> 自包含源码包 fan-shop-<version>.tar.gz + SHA256SUMS 并创建 GitHub Release
-#   build.yml   -> multi-arch Docker 镜像（latest + 版本标签）
+# 推送 tag 后由 GitHub Actions 自动完成发布（单条 workflow run）：
+#   release.yml -> 打包 fan-shop-<version>.tar.gz + SHA256SUMS 创建 GitHub Release
+#                  + multi-arch Docker 镜像（latest + 版本标签）
 #
 # Usage:
 #   TAG(必填) 形如 v2.1.7; --yes 免交互

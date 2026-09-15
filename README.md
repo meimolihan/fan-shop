@@ -271,9 +271,9 @@ fan-shop/
 bash scripts/build-and-push.sh v2.1.8 --yes
 ```
 
-推送 `v*` tag 后自动构建：
+推送 `v*` tag 后自动构建（单条 workflow run）：
 - **release.yml**：打包自包含源码包 `fan-shop-<版本>.tar.gz` + `SHA256SUMS`，发布到 GitHub Releases
-- **build.yml**：构建并推送 multi-arch Docker 镜像（`mobufan/fan-shop`，amd64 + arm64），main 分支更新 `latest`，tag 同时更新 `<版本>` 和 `latest`
+- 同一条 run 内后续构建并推送 multi-arch Docker 镜像（`mobufan/fan-shop`，amd64 + arm64），tag 同时更新 `<版本>` 和 `latest`
 
 查看发布结果：
 
