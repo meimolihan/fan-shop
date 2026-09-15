@@ -1,0 +1,48 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify version file matches tag
+        run: |
+          grep -q "VERSION = \"v${{ steps.version.outputs.VERSION }}\"" backend/app/version.py \
+            || { echo "backend/app/version.py 与 tag 版本不一致，终止发布" >&2; exit 1; }
+
+      # ==================== 打包自包含源码包 ====================
+      - name: Assemble source bundle
+        run: |
+          VER=${{ steps.version.outputs.VERSION }}
+          mkdir -p "dist/fan-shop-${VER}"
+          cp -r backend frontend "dist/fan-shop-${VER}/"
+          cp -r Dockerfile docker-compose.yml README.md "dist/fan-shop-${VER}/"
+          find "dist/fan-shop-${VER}" -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+          find "dist/fan-shop-${VER}" -type f -name '*.pyc' -delete
+          tar czf "fan-shop-${VER}.tar.gz" -C dist "fan-shop-${VER}"
+          sha256sum "fan-shop-${VER}.tar.gz" > SHA256SUMS
+          ls -lh "fan-shop-${VER}.tar.gz"
+
+      # ==================== 创建 GitHub Release ====================
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "fan-shop ${{ steps.version.outputs.VERSION }}"
+          files: |
+            fan-shop-${{ steps.version.outputs.VERSION }}.tar.gz
+            SHA256SUMS
+          generate_release_notes: true
