@@ -262,6 +262,35 @@ fan-shop/
 - **前端**: 原生 HTML/CSS/JavaScript
 - **容器**: Docker + Docker Compose
 
+## 版本发布
+
+发版通过 GitHub Actions 自动完成，本地脚本只更新版本号并触发：
+
+```bash
+# 一键发版（bump 版本号 -> push main -> 打 tag v*）
+bash scripts/build-and-push.sh v2.1.8 --yes
+```
+
+推送 `v*` tag 后自动构建：
+- **release.yml**：打包自包含源码包 `fan-shop-<版本>.tar.gz` + `SHA256SUMS`，发布到 GitHub Releases
+- **build.yml**：构建并推送 multi-arch Docker 镜像（`mobufan/fan-shop`，amd64 + arm64），main 分支更新 `latest`，tag 同时更新 `<版本>` 和 `latest`
+
+查看发布结果：
+
+```bash
+gh release view v2.1.8          # 源码包与校验和
+gh run list --workflow=release.yml --limit 1
+docker pull mobufan/fan-shop:v2.1.8
+```
+
+其他常用运维命令：
+
+```bash
+docker compose up -d            # 启动
+docker compose pull && docker compose up -d   # 升级到最新镜像
+docker compose logs -f fan-shop # 查看日志
+```
+
 ## 版本信息
 
 | 版本 | 日期 | 更新内容 |
