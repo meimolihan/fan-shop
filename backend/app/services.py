@@ -1597,7 +1597,6 @@ def delete_repo_local_files(repo_name: str) -> Dict:
     if repo.status == 'syncing':
         raise ValueError('仓库正在同步，请完成后再删除本地文件')
 
-    removed_apps = 0
     removed_files = 0
     removed_host_dirs = 0
 
@@ -1618,7 +1617,6 @@ def delete_repo_local_files(repo_name: str) -> Dict:
             app_names = sorted(child.name for child in repo_dir.glob("*"))
             shutil.rmtree(repo_dir, ignore_errors=True)
         removed_files = len(app_names)
-        removed_apps = len(app_names)
         if _mirror_targets_host(repo.local_path):
             host_root = HOST_MOUNT / FNOS_DOCKER_ROOT.lstrip("/")
             if host_root.exists():
