@@ -89,6 +89,67 @@ docker run -d \
 # 打开浏览器访问：http://localhost:8000
 ```
 
+### 方式五：源码运行（无 Docker，需自行安装 Python）
+
+> 本项目没有编译型二进制，源码运行前请先按 `backend/requirements.txt` 安装 Python 依赖。
+
+```bash
+# 1. 安装后端依赖
+pip install -r backend/requirements.txt
+
+# 2. 前端依赖（如需修改前端源码）
+npm ci --prefix frontend
+
+# 3. 启动服务
+cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8001
+
+# 访问应用
+# 打开浏览器访问：http://localhost:8001
+```
+
+## 卸载
+
+按安装方式对应卸载：
+
+### 方式一（fnOS FPK）卸载
+
+打开飞牛 fnOS 的「应用中心」，找到「非凡商店」并点击卸载，向导中可选择**保留数据**或**删除安装时配置的全部自定义目录**。建议卸载前先备份重要数据。
+
+### 方式二 / 方式三（一键脚本、Compose）卸载
+
+```bash
+cd fan-shop
+
+# 仅停止容器（保留全部数据），如需再次使用执行 docker compose up -d 即可
+docker compose down
+
+# 彻底卸载（停止并删除容器 + 删除镜像）
+docker compose down
+docker rmi mobufan/fan-shop:latest
+
+# 连数据一起删除（用户、会话、聊天记录、仓库、备份、日志、镜像包等）
+rm -rf backend/data backend/repos backend/scripts backend/backup backend/logs backend/image
+```
+
+### 方式四（Docker Run）卸载
+
+```bash
+docker stop fan-shop && docker rm fan-shop
+docker rmi mobufan/fan-shop:v2.1.4   # 版本号可替换为实际部署版本
+
+# 连数据一起删除
+rm -rf ./backend/data ./backend/repos ./backend/scripts ./backend/backup ./backend/logs ./backend/image
+```
+
+### 方式五（源码运行）卸载
+
+```bash
+# 停止服务进程（按实际运行方式结束 uvicorn/终端任务）后
+rm -rf backend/data backend/repos backend/scripts backend/backup backend/logs backend/image
+```
+
+> 说明：数据目录均为宿主机目录直接映射，不存储在 Docker volume 中，`docker compose down` 不会删除数据，需执行 `rm -rf` 才会彻底清除。
+
 ### 卷映射说明
 
 目录映射用于在宿主机持久化应用数据。即使不映射这些目录，应用也可以启动；但容器被删除或重建后，未映射目录中的数据会丢失。
