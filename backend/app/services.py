@@ -1180,7 +1180,7 @@ def scan_yml_files(repo_dir: Path, local_path: str = "") -> List[YmlFile]:
 
 
 def scan_script_files(repo_dir: Path, repo_url: str, branch: str, local_path: str = "") -> List[YmlFile]:
-    """从 Scripts 仓库同步清单中读取已导出到 scripts 根目录的脚本。"""
+    """从 fan-scripts 仓库同步清单中读取已导出到 scripts 根目录的脚本。"""
     state_key = _script_repo_state_key(repo_url, branch, local_path)
     script_paths = _load_script_repos_state().get(state_key, [])
     scripts = []

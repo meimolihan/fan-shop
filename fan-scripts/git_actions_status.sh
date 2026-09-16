@@ -1,19 +1,5 @@
 #!/bin/bash
-#
-# fan-shop - 发布脚本（触发 GitHub Actions 自动构建）
-# 不在本地编译任何产物：仅更新版本号、推送代码并打 v 开头 tag。
-# 推送 tag 后由 GitHub Actions 自动完成发布（单条 workflow run）：
-#   release.yml -> 打包 fan-shop-<version>.tar.gz + SHA256SUMS 创建 GitHub Release
-#                  + multi-arch Docker 镜像（latest + 版本标签）
-#
-# Usage:
-#   TAG(必填) 形如 v2.1.8; --yes 免交互; -m "备注" 可选发版说明
-#     bash scripts/build-and-push.sh v2.1.8 --yes -m "本次新增 xxx"
-set -euo pipefail
-
-info() { echo -e "${gl_lv}>>> $*${reset}"; }
-warn() { echo -e "${gl_huang}!!! $*${reset}"; }
-error() { echo -e "${gl_hong}ERROR: $*${reset}"; exit 1; }
+set -uo pipefail
 
 list_color_init() {
     export gl_hui=$'\033[38;5;59m'
@@ -28,7 +14,16 @@ list_color_init() {
 }
 list_color_init
 
+break_end() {
+    echo -e "\n${gl_lv}操作完成${gl_bai}"
+    echo -e "${gl_bai}按任意键退出 ${gl_hong}.${gl_huang}.${gl_lv}.${gl_bai}\c"
+    read -r -n 1 -s -r -p ""
+    echo ""
+    clear
+    exit 0
+}
 
+# 获取最新 release.yaml workflow 运行记录
 get_gh_run_info() {
     gh run list --workflow=release.yml --limit 1 --json status,displayTitle,headBranch,event,databaseId,startedAt
 }
@@ -54,7 +49,7 @@ calc_elapsed() {
 }
 
 beautify_gh_run() {
-    echo -e ""
+    clear
     echo -e "${gl_zi}>>> GitHub Actions Release 流水线信息${gl_bai}"
     echo -e "${gl_bufan}————————————————————————————————————————————————${gl_bai}"
 
@@ -63,8 +58,10 @@ beautify_gh_run() {
         echo -e "${gl_hong}[错误] 未找到 release.yaml 流水线运行记录${reset}"
         echo -e "${gl_bai}检查：gh auth status 确认gh已登录，仓库目录正确${reset}"
         echo -e "${gl_bufan}————————————————————————————————————————————————${gl_bai}"
+        break_end
     fi
 
+    # jq 解析合法字段
     status=$(echo "$json_data" | jq -r '.[0].status')
     title=$(echo "$json_data" | jq -r '.[0].displayTitle')
     branch=$(echo "$json_data" | jq -r '.[0].headBranch')
@@ -72,13 +69,16 @@ beautify_gh_run() {
     run_id=$(echo "$json_data" | jq -r '.[0].databaseId')
     started_at=$(echo "$json_data" | jq -r '.[0].startedAt')
 
+    # 计算运行耗时
     elapsed=$(calc_elapsed "$started_at")
 
+    # 状态翻译 + 颜色
     case "$status" in
         in_progress)
             status_text="${gl_huang}运行中${reset}"
             ;;
         completed)
+            # 拉取本次run的最终结果 conclusion
             conclusion=$(gh run view "$run_id" --json conclusion | jq -r '.conclusion')
             case "$conclusion" in
                 success) status_text="${gl_lv}成功${reset}";;
@@ -112,77 +112,5 @@ beautify_gh_run() {
     echo -e "${gl_lv}重新运行流水线：${reset}gh run rerun $run_id"
     echo -e "${gl_bufan}————————————————————————————————————————————————${gl_bai}"
 }
-
-YES_MODE=0
-TAG=""
-MSG=""
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --yes) YES_MODE=1; shift ;;
-        -m|--message)
-            shift
-            [ -n "${1:-}" ] || error "缺少 -m/--message 的备注内容"
-            MSG="$1"
-            shift
-            ;;
-        *) TAG="$1"; shift ;;
-    esac
-done
-
-[[ -z "${TAG}" ]] && error "缺少TAG参数，示例: $0 v2.1.7 --yes"
-
-cd "$(dirname "$0")/.."
-TARGET_VER="${TAG#v}"
-[[ "${TARGET_VER}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || error "TAG 格式错误，示例: v2.1.7"
-
-# ===================== 重复Tag/Release自动清理 =====================
-info "检查远端是否存在 Release ${TAG}"
-if command -v gh >/dev/null 2>&1 && gh release view "${TAG}" >/dev/null 2>&1; then
-    warn "发现已存在Release ${TAG}，准备删除Release并清理tag"
-    gh release delete "${TAG}" -y --cleanup-tag
-fi
-
-info "清理本地&远端Git tag: ${TAG}"
-git tag -d "${TAG}" 2>/dev/null || true
-git push origin --delete "${TAG}" 2>/dev/null || true
-
-# ===================== 版本号 bump =====================
-info "执行版本号更新 ${TARGET_VER}"
-BUMP_FILES=("backend/app/version.py")
-for f in "${BUMP_FILES[@]}"; do
-    [[ ! -f "${f}" ]] && error "缺失文件 ${f}"
-done
-
-BUILD_DATE="$(date +%F)"
-sed -i "s/^VERSION = .*/VERSION = \"v${TARGET_VER}\"/" backend/app/version.py
-sed -i "s/^BUILD_DATE = .*/BUILD_DATE = \"${BUILD_DATE}\"/" backend/app/version.py
-
-info "版本号确认:"
-grep -n '^VERSION =' backend/app/version.py
-grep -n '^BUILD_DATE =' backend/app/version.py
-
-# ===================== 写发版备注 =====================
-info "写入发版备注 RELEASE_NOTES.md"
-{
-  if [ -n "${MSG}" ]; then
-    printf '%s\n' "${MSG}"
-  fi
-} > RELEASE_NOTES.md
-
-# ===================== Git 提交 & Tag =====================
-info "提交版本变更"
-git add RELEASE_NOTES.md backend/app/version.py
-git commit -m "chore: bump version to ${TARGET_VER}" || info "无版本文件变更，跳过提交"
-git push origin main
-
-git tag "${TAG}"
-git push origin "${TAG}"
-
-# ===================== 交由 CI 自动构建发布 =====================
-info "✅ 已推送 tag ${TAG}，GitHub Actions 将自动完成打包与 Release 创建"
-
-info "查看发布结果: gh release view ${TAG}"
-info "查看镜像: docker pull mobufan/fan-shop:${TAG}"
-echo -e "${gl_bai}远程安装命令： ${gl_lv}bash <(curl -sL gitee.com/meimolihan/cmdbox/raw/master/sh/dc_inst_fan-shop.sh) 8000 /vol1/1000/compose/fan-shop${gl_bai}"
 
 beautify_gh_run

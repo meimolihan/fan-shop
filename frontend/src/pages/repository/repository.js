@@ -153,7 +153,7 @@ async function loadRepos() {
             <div class="repo-card ${repo.is_current ? 'current-repo' : ''}" data-name="${escapeRepoText(repo.name)}" data-status="${escapeRepoText(repo.status)}" data-search="${escapeRepoText(`${repo.name} ${repo.url}`.toLowerCase())}">
                 <div class="repo-icon"><i class="fab fa-github"></i></div>
                 <div class="repo-info">
-                    <h3>${escapeRepoText(repo.name)}<span class="repo-type-badge ${repo.repo_type === 'script' ? 'script' : 'compose'}">${repo.repo_type === 'script' ? 'Scripts' : 'Compose'}</span>${repo.is_current ? ' <span class="current-badge">当前系统仓库</span>' : ''}</h3>
+                    <h3>${escapeRepoText(repo.name)}<span class="repo-type-badge ${repo.repo_type === 'script' ? 'script' : 'compose'}">${repo.repo_type === 'script' ? 'fan-scripts' : 'Compose'}</span>${repo.is_current ? ' <span class="current-badge">当前系统仓库</span>' : ''}</h3>
                     <p>${escapeRepoText(repo.url)}</p>
                     <div class="repo-meta">
                     <div class="meta-item">
@@ -261,7 +261,7 @@ async function deleteLocalFiles(btn) {
         showMessage('仓库正在同步，请完成后再操作', 'error');
         return;
     }
-    const isScript = card.querySelector('.repo-type-badge')?.textContent === 'Scripts';
+    const isScript = card.querySelector('.repo-type-badge')?.textContent === 'fan-scripts';
     const contentLabel = isScript ? '已同步的脚本文件' : '已同步的本地文件';
     if (!confirm(`确定要删除仓库“${repoName}”的${contentLabel}吗？\n将删除本机已同步的内容（Git 仓库不变，已部署的容器不受影响），删除后需重新同步才能恢复。`)) return;
     showDeleteLocalConfirmModal(repoName, isScript, async () => {

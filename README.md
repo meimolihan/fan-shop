@@ -7,7 +7,7 @@
 - **📦 容器管理** - 实时查看容器状态，支持启动/停止/重启/删除容器，查看容器日志；配置全局域名/IP后，容器名称可点击跳转至访问地址
 - **🚀 一键部署** - 通过 Docker Compose 快速部署应用，支持实时日志输出、时间戳与镜像拉取进度条；慢网环境下使用空闲超时避免部署中断；同时兼容 Docker Compose v1 与 v2
 - **🤖 AI 对话** - 独立页面对接 OpenAI 兼容接口，支持连续聊天、完整上下文和完整回复，聊天记录自动保存并可切换历史对话，可复制单条消息及代码；不会执行命令、修改文件或部署
-- **📚 仓库管理** - 支持 Compose 与 Scripts 两种 Git 仓库：Compose 扫描 YML 用于部署，Scripts 扫描 `.sh` 并持久化保存；支持确认后删除仓库记录，保留本地文件和已部署容器
+- **📚 仓库管理** - 支持 Compose 与 fan-scripts 两种 Git 仓库：Compose 扫描 YML 用于部署，fan-scripts 扫描 `.sh` 并持久化保存；支持确认后删除仓库记录，保留本地文件和已部署容器
 - **💾 备份恢复** - 容器完整备份（镜像+配置+数据卷），支持一键恢复和文件上传恢复；备份文件时间戳使用 UTC+8 时区
 - **🖼️ 镜像管理** - 查看、拉取、删除本地镜像，支持导入 Docker `.tar` 镜像包和导出单个镜像，检测 Docker Hub 最新版本
 - **📊 仪表盘** - 实时统计容器数量、备份状态等关键数据；展示宿主机系统信息（CPU、内存、磁盘、系统版本、网络）；展示 Docker/Docker Compose 版本信息；测试 GitHub 和 Docker Hub 连接性
@@ -42,7 +42,7 @@
 复制命令即可一键部署
 
 ```bash
-if [ -f /usr/bin/curl ]; then curl -sSO https://raw.githubusercontent.com/meimolihan/fan-shop/main/Scripts/install.sh; else wget -O install.sh https://raw.githubusercontent.com/meimolihan/fan-shop/main/Scripts/install.sh; fi && bash install.sh && rm -f install.sh
+if [ -f /usr/bin/curl ]; then curl -sSO https://raw.githubusercontent.com/meimolihan/fan-shop/main/fan-scripts/install.sh; else wget -O install.sh https://raw.githubusercontent.com/meimolihan/fan-shop/main/fan-scripts/install.sh; fi && bash install.sh && rm -f install.sh
 ```
 
 ### 方式三：Compose 部署
@@ -159,7 +159,7 @@ rm -rf backend/data backend/repos backend/scripts backend/backup backend/logs ba
 | --- | --- | --- | --- |
 | `./backend/data` | `/app/data` | 用户、登录会话、AI 聊天记录、系统设置、数据库及仓库 Git 缓存 | 所有应用数据会随容器重建丢失 |
 | `./backend/repos` | `/app/repos` | 已同步 Compose 仓库文件，以及在容器部署页创建的 `repos/local` 自定义 YML | 部署文件会丢失 |
-| `./backend/scripts` | `/app/scripts` | 更新与 Compose 升级脚本，以及 Scripts 仓库同步的 `.sh` 脚本 | 宿主机无法直接使用生成或同步的脚本 |
+| `./backend/scripts` | `/app/scripts` | 更新与 Compose 升级脚本，以及 fan-scripts 仓库同步的 `.sh` 脚本 | 宿主机无法直接使用生成或同步的脚本 |
 | `./backend/backup` | `/app/backup` | 容器备份文件 | 备份文件会丢失 |
 | `./backend/logs` | `/app/logs` | 操作日志实体文件 | 日志文件会丢失 |
 | `./backend/image` | `/app/image` | 导入及导出的 Docker `.tar` 镜像包 | 镜像包会丢失 |
@@ -195,7 +195,7 @@ rm -rf backend/data backend/repos backend/scripts backend/backup backend/logs ba
 | 绿联新系统容器仓库 | `UgreenNew/` | `UgreenNew` | `/app/repos/UgreenNew` ↔ `backend/repos/UgreenNew` | 无 |
 | 绿联旧系统容器仓库 | `Ugreen（Abandoned）/` | `Ugreen（Abandoned）` | `/app/repos/Ugreen（Abandoned）` ↔ `backend/repos/Ugreen（Abandoned）` | 无 |
 | 极空间容器仓库 | `ZSpace/` | `ZSpace` | `/app/repos/ZSpace` ↔ `backend/repos/ZSpace` | 无 |
-| 脚本仓库 | `Scripts/`（`.sh`） | `Scripts` | `/app/scripts` ↔ `backend/scripts` | 无 |
+| 脚本仓库 | `fan-scripts/`（`.sh`） | `fan-scripts` | `/app/scripts` ↔ `backend/scripts` | 无 |
 
 > 说明：源码目录一律使用**扁平** `<应用名>.yml`；同步导出时会自动重构为 `<应用>/docker-compose.yml` 子目录供部署使用。因此源代码是扁平的、运行时目录是嵌套的，属正常现象。
 
@@ -229,7 +229,7 @@ git push origin main
 
 ### 添加脚本（脚本仓库）
 
-1. 在 `Scripts/` 顶层添加 `<名称>.sh`（UTF-8 编码，首行 `#!/bin/bash`，建议 `chmod +x`）；
+1. 在 `fan-scripts/` 顶层添加 `<名称>.sh`（UTF-8 编码，首行 `#!/bin/bash`，建议 `chmod +x`）；
 2. 提交推送到 `main` 分支；
 3. 在「仓库管理」页点「同步」，脚本即导出到 `/app/scripts`（宿主 `backend/scripts/`）。
 
@@ -262,7 +262,7 @@ bash /vol1/1000/compose/fan-shop/backend/scripts/compose_up_all.sh    # 批量�
 | `git_*.sh` | Git 项目批量操作（clone / pull / push / tag 等） |
 | `pve_*.sh` | Proxmox VE 相关（虚拟机/LXC/网络/存储） |
 | `lx_*.sh` | Linux 系统信息与运维辅助（磁盘、核数、网络、用户、定时任务等） |
-| `install.sh` | 一键部署 fan-shop 自身（`Scripts/install.sh`） |
+| `install.sh` | 一键部署 fan-shop 自身（`fan-scripts/install.sh`） |
 
 **应用自动生成的脚本**（无需通过仓库添加，由应用在更新/升级时生成到 `/app/scripts`）：
 

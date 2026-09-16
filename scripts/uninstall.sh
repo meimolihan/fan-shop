@@ -9,9 +9,23 @@
 #   bash scripts/uninstall.sh --purge  # 连数据一起删除
 set -euo pipefail
 
-info() { echo -e "\033[32m>>> $*\033[0m"; }
-warn() { echo -e "\033[33m!!! $*\033[0m"; }
-error() { echo -e "\033[31mERROR: $*\033[0m"; exit 1; }
+info() { echo -e "${gl_lv}>>> $*${reset}"; }
+warn() { echo -e "${gl_huang}!!! $*${reset}"; }
+error() { echo -e "${gl_hong}ERROR: $*${reset}"; exit 1; }
+
+# ================== terminal colors ==================
+list_color_init() {
+    export gl_hui=$'\033[38;5;59m'
+    export gl_hong=$'\033[38;5;9m'
+    export gl_lv=$'\033[38;5;10m'
+    export gl_huang=$'\033[38;5;11m'
+    export gl_lan=$'\033[38;5;32m'
+    export gl_bai=$'\033[38;5;15m'
+    export gl_zi=$'\033[38;5;13m'
+    export gl_bufan=$'\033[38;5;14m'
+    export reset=$'\033[0m'
+}
+list_color_init
 
 PURGE=0
 for arg in "$@"; do

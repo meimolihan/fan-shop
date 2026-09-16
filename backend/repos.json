@@ -31,7 +31,7 @@
         "name": "脚本仓库",
         "repo_url": "https://github.com/meimolihan/fan-shop",
         "branch": "main",
-        "local_path": "Scripts",
+        "local_path": "fan-scripts",
         "repo_type": "script"
     }
 ]
