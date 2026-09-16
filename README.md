@@ -81,6 +81,7 @@ docker run -d \
   -v /etc/passwd:/etc/passwd:ro \
   -v /etc/group:/etc/group:ro \
   -e PYTHONUNBUFFERED=1 \
+  -e DOCKER_HOST=unix:///host/run/docker.sock \
   --privileged \
   --restart unless-stopped \
   mobufan/fan-shop:v2.1.4
@@ -172,6 +173,8 @@ rm -rf backend/data backend/repos backend/scripts backend/backup backend/logs ba
 | `/var/run/docker.sock:/var/run/docker.sock` | 管理宿主机 Docker 容器、镜像与网络 | 不可省略；省略后 Docker 管理功能不可用 |
 | `/:/host:rw`、`/etc/docker:/etc/docker:rw` | 获取宿主机信息、更新 Docker 配置及重启 Docker | 可省略，但宿主机操作和 Docker 加速源功能受限 |
 | `/etc/passwd:/etc/passwd:ro`、`/etc/group:/etc/group:ro` | 识别宿主机用户与组权限 | 可省略，但终端与权限识别可能受限 |
+
+> **关于 Docker 数据连接稳定性**：容器直接挂载的 `/var/run/docker.sock` 是 Docker 守护进程重启时会被**重新创建**的 socket 文件，bind-mount 到容器后即固定指向旧 inode，宿主机 Docker 一旦重启该连接就会失效（表现为「容器管理」页面空白）。因此必须额外设置环境变量 `DOCKER_HOST=unix:///host/run/docker.sock`，让所有 `docker` CLI 调用走宿主机根目录挂载（`/:/host`）下的实时 socket 路径 `/host/run/docker.sock`。该路径随 Docker 重启自动指向最新 socket，永不失效。`/:/host` 因此为 Docker 管理功能正常工作的必需映射。
 
 ### 默认账号
 
@@ -273,6 +276,7 @@ bash /vol1/1000/compose/fan-shop/backend/scripts/compose_up_all.sh    # 批量�
 - **添加文件后重新构建镜像/重启，UI 数量没变？** 重启不会重新导出内容，必须在该仓库页点「同步」，它才会从 GitHub 重新拉取、导出、重构并镜像。
 - **为什么源码是扁平文件、运行目录是子目录？** 这是导出的自动重构行为：源码统一 `<应用名>.yml`，导出后变成 `<应用>/docker-compose.yml`，两者配套。
 - **飞牛仓库 UI 显示「未同步」，但文件都在？** 说明宿主机 `/vol1/1000/Docker` 目录缺失（被手动删除或系统清理）；点一次「同步」即可自动重建并镜像。
+- **宿主机 Docker 重启后「容器管理」页面空白？** 这是 bind-mount 的 `/var/run/docker.sock` 文件在 Docker 重启后被替换、容器仍指向旧 socket 所致。请确认容器环境变量已设置 `DOCKER_HOST=unix:///host/run/docker.sock`（配合 `/:/host` 挂载走实时 socket 路径）；若容器未带该环境变量，重建容器即可恢复。
 
 
 ## 项目结构

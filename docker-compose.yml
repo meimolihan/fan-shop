@@ -20,5 +20,6 @@ services:
       - /etc/group:/etc/group:ro
     environment:
       - PYTHONUNBUFFERED=1
+      - DOCKER_HOST=unix:///host/run/docker.sock
     privileged: true
     restart: unless-stopped
