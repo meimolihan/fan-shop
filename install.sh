@@ -7,6 +7,72 @@ print_box() {
     echo "========================================"
 }
 
+# ================== GitHub 下载加速镜像 ==================
+# 原始 GitHub 地址超时/失败时，按下列顺序依次尝试（末尾必须带斜杠）
+GITHUB_MIRRORS=(
+  "https://ghfast.top/"
+  "https://ghproxy.net/"
+  "https://gh.xxooo.cf/"
+  "https://v6.gh-proxy.org/"
+  "https://githubproxy.cc/"
+)
+# v6.gh-proxy.org 为纯 IPv6 代理：本机未配置 IPv6 地址时剔除，避免空等超时
+if [ ! -s /proc/net/if_inet6 ]; then
+  _no_v6=()
+  for _m in "${GITHUB_MIRRORS[@]}"; do
+    case "${_m}" in
+      *v6.gh-proxy.org*) continue ;;
+    esac
+    _no_v6+=("${_m}")
+  done
+  GITHUB_MIRRORS=("${_no_v6[@]}")
+fi
+
+# 原始 GitHub URL -> 候选地址列表（原始优先，再依次套用各镜像）
+make_url_candidates() {
+  local github_url="$1" p
+  printf '%s\n' "${github_url}"
+  for p in "${GITHUB_MIRRORS[@]}"; do
+    printf '%s\n' "${p}${github_url}"
+  done
+}
+
+# 下载单个文件：候选按序尝试，单链接单次 120s 超时后换源。
+# 任一候选成功返回 0；全部失败返回 1。
+download_file() {
+  local url="$1" dst="$2" u=""
+  while IFS= read -r u; do
+    echo "  尝试下载: ${u}"
+    rm -f "${dst}"
+    if command -v curl >/dev/null 2>&1; then
+      if command -v timeout >/dev/null 2>&1; then
+        timeout 120 curl -fsSL --connect-timeout 10 --max-time 120 -o "${dst}" "${u}" 2>/dev/null || continue
+      else
+        curl -fsSL --connect-timeout 10 --max-time 120 -o "${dst}" "${u}" 2>/dev/null || continue
+      fi
+    elif command -v wget >/dev/null 2>&1; then
+      wget -qO "${dst}" --timeout=120 --tries=1 "${u}" 2>/dev/null || continue
+    else
+      return 1
+    fi
+    [ -s "${dst}" ] || continue
+    return 0
+  done < <(make_url_candidates "${url}")
+  return 1
+}
+
+# 下载 docker-compose.yml（原始/镜像按序重试）
+download_compose_yml() {
+    print_box "正在下载配置文件"
+    echo "正在下载 docker-compose.yml ..."
+    if download_file "https://github.com/Double-Stack-Workshop/doublestack-shop/raw/main/docker-compose.yml" docker-compose.yml; then
+        echo "配置文件下载成功"
+    else
+        echo "错误：配置文件下载失败！程序退出"
+        exit 1
+    fi
+}
+
 clear
 print_box "双栈工坊商店 - 安装向导"
 echo "1、飞牛Nas（fnOS）"
@@ -72,14 +138,7 @@ if [ "$nas_choose" = "1" ];then
     sleep 1
     clear
     cd "$full_path"
-    compose_url="https://raw.githubusercontent.com/Double-Stack-Workshop/doublestack-shop/main/docker-compose.yml"
-    print_box "正在下载配置文件"
-    echo "正在下载 docker‑compose.yml ..."
-    curl -fsSL "$compose_url" -o docker-compose.yml
-    if [ ! -f "docker-compose.yml" ];then
-        echo "错误：配置文件下载失败！程序退出"
-        exit 1
-    fi
+download_compose_yml
     sed -i "s|./backend/|${shop_data_path}/|g" docker-compose.yml
     echo -e "\n请输入宿主机访问端口（默认8000）:"
     read host_port
@@ -137,14 +196,7 @@ elif [ "$nas_choose" = "2" ];then
     sleep 1
     clear
     cd "$full_path"
-    compose_url="https://raw.githubusercontent.com/Double-Stack-Workshop/doublestack-shop/main/docker-compose.yml"
-    print_box "正在下载配置文件"
-    echo "正在下载 docker‑compose.yml ..."
-    curl -fsSL "$compose_url" -o docker-compose.yml
-    if [ ! -f "docker-compose.yml" ];then
-        echo "错误：配置文件下载失败！程序退出"
-        exit 1
-    fi
+download_compose_yml
     sed -i "s|./backend/|${shop_data_path}/|g" docker-compose.yml
     echo -e "\n请输入宿主机访问端口（默认8000）:"
     read host_port
@@ -216,14 +268,7 @@ elif [ "$nas_choose" = "3" ];then
     sleep 1
     clear
     cd "$full_path"
-    compose_url="https://raw.githubusercontent.com/Double-Stack-Workshop/doublestack-shop/main/docker-compose.yml"
-    print_box "正在下载配置文件"
-    echo "正在下载 docker‑compose.yml ..."
-    curl -fsSL "$compose_url" -o docker-compose.yml
-    if [ ! -f "docker-compose.yml" ];then
-        echo "错误：配置文件下载失败！程序退出"
-        exit 1
-    fi
+download_compose_yml
     sed -i "s|./backend/|${shop_data_path}/|g" docker-compose.yml
     echo -e "\n请输入宿主机访问端口（默认8000）:"
     read host_port
