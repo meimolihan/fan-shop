@@ -160,6 +160,8 @@ done
 
 [[ -z "${TAG}" ]] && error "缺少TAG参数，示例: $0 v2.1.7 --yes"
 
+[[ "${TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || error "TAG 格式应为 vX.Y.Z，例如 v2.1.7（当前: ${TAG}）"
+
 cd "$(dirname "$0")/.."
 TARGET_VER="${TAG#v}"
 [[ "${TARGET_VER}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || error "TAG 格式错误，示例: v2.1.7"
