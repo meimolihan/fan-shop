@@ -6,16 +6,16 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       APP_LOG_DIR: ${{ github.workspace }}/.ci-runtime/logs
       BACKUP_DIR: ${{ github.workspace }}/.ci-runtime/backup
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
       - run: pip install -r backend/requirements.txt ruff
